@@ -1,95 +1,227 @@
+'use client'
+
+import * as React from 'react';
+
 import Image from 'next/image'
 import styles from './page.module.css'
+import styleClasses from './page.customs.css'
+import { Paper, Typography, Button, Select, MenuItem, InputLabel, FormControl, ButtonGroup } from '@mui/material'
+import TextField from '@mui/material/TextField'
+import Autocomplete from '@mui/material/Autocomplete'
+import nameList from './nameList.json'
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import FolderIcon from '@mui/icons-material/Folder';
+import SendIcon from '@mui/icons-material/Send';
+import Grid from '@mui/material/Unstable_Grid2';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import Head from 'next/head'
+
+import Canvas from './canvas';
+import PathSolve from './pathsolve';
+
+import distanceData from './data/distanceData.json'
+import metroData from './data/stationLineList.json'
+import stationIdList from './data/stationIdList.json'
+
+
+function findShortestPath(startID, endID, transferPenalty = 0) {
+  let neighbors = {};
+
+  // Setup graph
+  for (let record of distanceData) {
+    let id1 = record.id1;
+    let id2 = record.id2;
+    let onLine = record.onLine;
+    let length = parseInt(record.length);
+    if (!neighbors[id1]) {
+      neighbors[id1] = [];
+    }
+    if (!neighbors[id2]) {
+      neighbors[id2] = [];
+    }
+    neighbors[id1].push({ id: id2, length: length, onLine: onLine });
+    neighbors[id2].push({ id: id1, length: length, onLine: onLine });
+  }
+
+  let queue = [];
+  queue.push({ id: startID, path: [], passedStation: new Set() });
+  let visited = new Set();
+  let shortest = { path: [], length: Infinity, setPenalties: transferPenalty, transferList: [], isValid: false, startStationInfo: { name: "", line: "" } };
+
+  while (queue.length > 0) {
+    let current = queue.shift();
+    let currentID = current.id;
+    let currentPath = current.path;
+    let currentPassedStation = current.passedStation;
+    let currentstartStationInfo = { name: "", line: "" }
+    let currentTransferList = []
+    // if (visited.has(currentID)) {
+    //   continue;
+    // }
+    // Calculate length when finished
+    if (currentID == endID) {
+      shortest.isValid = true
+      let currentLength = 0;
+      let currentTransfers = 0;
+      let lastOnLine = -1;
+      for (let i = 0; i < currentPath.length - 1; i++) {
+        let fromID = currentPath[i];
+        let toID = currentPath[i + 1];
+        for (let neighbor of neighbors[fromID]) {
+          if (neighbor.id == toID) {
+            currentLength += parseInt(neighbor.length);
+            if (lastOnLine == -1) {
+              // console.log(`Trig Init! ${fromID} - ${toID}, ${lastOnLine} -> ${neighbor.onLine}`)
+              lastOnLine = neighbor.onLine
+            } else if (lastOnLine != neighbor.onLine) {
+              currentLength += transferPenalty;
+              currentTransfers = currentTransfers + 1;
+              currentTransferList.push({
+                id: fromID,
+                prev: lastOnLine,
+                to: neighbor.onLine
+              })
+              // console.log(`Trig Transfer! ${fromID} - ${toID}, ${lastOnLine} -> ${neighbor.onLine}`)
+              lastOnLine = neighbor.onLine
+            }
+            break;
+          }
+        }
+      }
+      if (currentLength < shortest.length) {
+        shortest.path = currentPath;
+        shortest.length = currentLength;
+        shortest.transfers = currentTransfers;
+        shortest.transferList = currentTransferList;
+        // shortest.startStationInfo = currentstartStationInfo;
+        console.log(neighbors[startID].find((item, index) => {
+          return item.id == currentPath[0]
+        }))
+        shortest.startStationInfo = {
+          name: startID, line: neighbors[startID].find((item, index) => {
+            return item.id == currentPath[0]
+          }).onLine
+        }
+      }
+      continue;
+    }
+    visited.add(currentID);
+    for (let neighbor of neighbors[currentID]) {
+      let nextID = neighbor.id;
+      if (currentPassedStation.has(nextID)) {
+        continue
+      } else {
+        let nextPath = [...currentPath, nextID];
+        let nextPassedStation = currentPassedStation.add(currentID);
+        queue.push({ id: nextID, path: nextPath, passedStation: nextPassedStation });
+      }
+    }
+  }
+  shortest.length = shortest.length - shortest.transfers * shortest.setPenalties
+  return shortest;
+}
+
+function parseFinderInformation(shortest) {
+
+  console.log(`length: ${shortest.length - shortest.transfers * shortest.setPenalties}, transfers: ${shortest.transfers}`)
+  let textDump = "> "
+  shortest.path.forEach(element => {
+    textDump += `${metroData[parseInt(element)]} - `
+  });
+  console.log(textDump)
+}
+
+
 
 export default function Home() {
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+  const [penalty, setPenalty] = React.useState(0)
+  const [pathResult, setPathResult] = React.useState({ isValid: false, path: [], length: Infinity, setPenalties: 0, transferList: [], startStationInfo: { name: "", line: "" } })
+
+  const [beginName, setBeginName] = React.useState('')
+  const [endName, setEndName] = React.useState('')
+
+  function handleRouteClick() {
+    let foundBeginId = stationIdList.findIndex((item) => { return item == beginName })
+    let foundEndId = stationIdList.findIndex((item) => { return item == endName })
+    if (foundBeginId == -1 || foundEndId == -1) {
+      throw "BeginOrEndIdNotFound"
+    }
+    setPathResult(findShortestPath(foundBeginId, foundEndId, penalty))
+  }
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: prefersDarkMode ? 'dark' : 'light',
+        },
+      }),
+    [prefersDarkMode],
+  );
+
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Head>
+        <title>地铁导航系统</title>
+        <meta name='description' content='用 React 写的地铁导航系统' />
+      </Head>
+      <main className={styles.main}>
+        <Grid container>
+          <Grid xs={3}>
+            <Paper className={styles.toplevel}>
+              {/* <Typography variant="h2">地铁线路图</Typography> */}
+              <FormControl fullWidth className={styles.formControl}>
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-begin"
+                  options={nameList}
+                  renderInput={(params) => <TextField {...params} label="起点" />}
+                  value={beginName}
+                  onChange={(event, value) => { setBeginName(value) }}
+                />
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-end"
+                  options={nameList}
+                  renderInput={(params) => <TextField {...params} label="终点" />}
+                  value={endName}
+                  onChange={(event, value) => { setEndName(value) }}
+                />
+              </FormControl>
+              <FormControl fullWidth className={styles.formControl}>
+                <InputLabel id="algorithm-label">策略</InputLabel>
+                <Select
+                  labelId="algorithm-label"
+                  id="algorithm-select"
+                  value={penalty}
+                  label="策略"
+                  onChange={(event => { setPenalty(event.target.value) })}
+                >
+                  <MenuItem value={0}>距离最短</MenuItem>
+                  <MenuItem value={2000}>时间最短</MenuItem>
+                  <MenuItem value={999999}>最少换乘</MenuItem>
+                </Select>
+              </FormControl>
+              <Button variant="contained" size='large' className={styles.goButton} endIcon={<SendIcon />} onClick={handleRouteClick}>开始寻路！</Button>
+              <PathSolve
+                metadata={pathResult}>
+              </PathSolve>
+            </Paper>
+          </Grid>
+          <Grid xs={9} className={styles.rightPanel}>
+            <Canvas></Canvas>
+          </Grid>
+        </Grid>
+      </main>
+    </ThemeProvider>
   )
 }
