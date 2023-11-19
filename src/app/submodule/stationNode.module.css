@@ -6,9 +6,9 @@
     transform: translate(-50px, -50px);
     border: 15px solid black;
     border-style: solid;
-    background-color: rgb(224, 224, 224);
+    background-color: rgb(224, 224, 224) !important;
     border-color: rgb(55, 71, 79);
-    border-radius: 150px;
+    border-radius: 150px !important;
     /* color: black; */
     justify-content: center;
     align-items: center;
