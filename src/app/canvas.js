@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { Button, ButtonGroup } from "@mui/material";
@@ -17,6 +17,23 @@ export default function Canvas(props) {
     return props.metadata.isTransfer[index] != -1
   }
 
+  function updateLines(){
+    var ctx = document.querySelector('#the-canvas').getContext('2d')
+    ctx.reset()
+    ctx.strokeStyle = 'black'
+    ctx.lineWidth = 100
+    if(props.metadata.path.length == 0) return;
+    for(let i=1; i<props.metadata.path.length; i++){
+      ctx.moveTo(stationPos[props.metadata.path[i]].x, stationPos[props.metadata.path[i]].y)
+      ctx.lineTo(stationPos[props.metadata.path[i-1]].x, stationPos[props.metadata.path[i-1]].y)
+      ctx.stroke()
+    }
+  }
+  // updateLines()
+  useEffect(()=>{
+    updateLines()
+  })
+
   return (
     <TransformWrapper
       initialScale={0.1}
@@ -32,7 +49,7 @@ export default function Canvas(props) {
             <Button onClick={() => resetTransform()} startIcon={<FullscreenIcon />}>重置</Button>
           </ButtonGroup>
           <TransformComponent wrapperClass={styles.canvasWrapper}>
-            <canvas className={styles.thecanvas} width={14173} height={11942} style={{ backgroundImage: 'url(\'lwt-min.jpg\')', imageRendering: 'crisp-edges' }}>
+            <canvas className={styles.thecanvas} id="the-canvas" width={14173} height={11942} style={{ backgroundImage: 'url(\'lwt-min.jpg\')', imageRendering: 'crisp-edges' }}>
             </canvas>
             {props.metadata.path.map((item, index) => {
               // console.log(`${item} => ${stationPos[item].id}`)
