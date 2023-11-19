@@ -19,7 +19,7 @@
 
 
 .stationNode:nth-child(2), .stationNode:last-child {
-    background-color: rgb(0, 150, 136);
+    background-color: rgb(0, 150, 136) !important;
     border-color: rgb(0, 105, 92);
     width: 200px;
     height: 200px;
@@ -29,7 +29,7 @@
 }
 
 .stationNode[data-isTransfer=true] {
-    background-color: rgb(30, 136, 229);
+    background-color: rgb(30, 136, 229) !important;
     border-color: rgb(21, 101, 192);
     width: 200px;
     height: 200px;
