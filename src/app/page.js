@@ -21,6 +21,7 @@ import SendIcon from '@mui/icons-material/Send';
 import Grid from '@mui/material/Unstable_Grid2';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Head from 'next/head'
+import { Analytics } from '@vercel/analytics/react';
 
 import Canvas from './canvas';
 import PathSolve from './pathsolve';
@@ -222,6 +223,7 @@ export default function Home() {
           </Grid>
         </Grid>
       </main>
+      <Analytics />
     </ThemeProvider>
   )
 }
