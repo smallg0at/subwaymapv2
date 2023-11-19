@@ -8,6 +8,7 @@
     height: 100vh;
     max-height: 100vh;
     cursor: grab;
+    position: relative;
 }
 
 .canvasWrapper:active{

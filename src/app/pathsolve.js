@@ -1,21 +1,12 @@
 import * as React from 'react';
 
-import { Card, Grid, Typography, CardContent, List, ListItem, ListItemText, ListItemIcon, Divider } from "@mui/material";
-import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import StarBorder from '@mui/icons-material/StarBorder';
-import { parse } from "csv-parse";
+import { Card, Typography, CardContent, List, ListItem, ListItemText, ListItemIcon, Divider } from "@mui/material";
+import Grid from '@mui/material/Unstable_Grid2';
 
 import stationIdList from './data/stationIdList.json'
 
-import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import LoopIcon from '@mui/icons-material/Loop';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
-import CircleIcon from '@mui/icons-material/Circle';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
-import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 var keyIter = 0;
@@ -31,7 +22,7 @@ export default function PathSolve(props) {
     })
     if (isTransferStation != -1) {
       let dt = props.metadata.transferList[isTransferStation]
-      return `在此换乘：${dt.prev}${dt.prev.includes('线')?'':' 号线'} ➡ ${dt.to}${dt.to.includes('线')?'':' 号线'}`;
+      return `在此换乘：${dt.prev}${dt.prev.includes('线') ? '' : ' 号线'} ➡ ${dt.to}${dt.to.includes('线') ? '' : ' 号线'}`;
     }
   }
 
@@ -40,7 +31,7 @@ export default function PathSolve(props) {
       return item1.id == parseInt(item)
     })
     if (isTransferStation != -1) return (<ChangeCircleIcon />)
-    else if(props.metadata.path.length == index + 1 ) return (<LocationOnIcon />)
+    else if (props.metadata.path.length == index + 1) return (<LocationOnIcon />)
     else return (<ArrowDownwardIcon color='text.secondary' style={{ opacity: 0.3 }} />)
   }
 
@@ -62,33 +53,48 @@ export default function PathSolve(props) {
 
   return (
     <Grid container direction={'column'} sx={{ display: (props.metadata.isValid) ? 'flex' : 'none' }}>
+      <Card variant='outlined' style={{marginBottom: '15px'}}>
+        <CardContent style={{paddingBottom: '16px'}}>
+        <Grid container>
+            <Grid item xs={6}>
+            <Typography fontSize={'20px'} gutterBottom>{Math.ceil(props.metadata.time)} 分钟</Typography>
+            </Grid>
+            <Grid item xs={6}>
+            <Typography fontSize={'20px'} gutterBottom>{(props.metadata.length / 1000).toFixed(1)}km</Typography>
+            </Grid>
+            <Grid item xs={6}>
+            <Typography fontSize={'20px'}>换乘 {props.metadata.transfers} 次</Typography>
+            </Grid>
+            <Grid item xs={6}>
+            <Typography fontSize={'20px'}>票价￥{handleTicketPrice(props.metadata.length / 1000)}</Typography>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
       <Card variant='outlined'>
         <CardContent>
-          <Typography variant="h6" gutterBottom>
-            票价￥{handleTicketPrice(props.metadata.length / 1000)} · 总距离 {props.metadata.length / 1000}km <br />
-            换乘 {props.metadata.transfers} 次
-          </Typography>
-          <Divider>路线信息</Divider>
+          <Typography variant='h5'>路线信息</Typography>
           <List dense>
             <ListItem disableGutters>
               <ListItemIcon>
                 <LocationOnIcon />
               </ListItemIcon>
-              <ListItemText primary={stationIdList[props.metadata.startStationInfo.name]} secondary={`乘坐 ${props.metadata.startStationInfo.line}${props.metadata.startStationInfo.line.includes('线')?'':' 号线'}`}></ListItemText>
+              <ListItemText primary={stationIdList[props.metadata.startStationInfo.name]+`(${props.metadata.startStationInfo.name})`} secondary={`乘坐 ${props.metadata.startStationInfo.line}${props.metadata.startStationInfo.line.includes('线') ? '' : ' 号线'}`}></ListItemText>
             </ListItem>
             {props.metadata.path.map((item, index) => {
+              if(index > 0){
               return (
                 <React.Fragment key={keyIter++}>
                   <ListItem disableGutters>
                     <ListItemIcon>
                       {handleIfIsTranfer(item, index)}
                     </ListItemIcon>
-                    <ListItemText primary={stationIdList[parseInt(item)]} secondary={handleTransferText(item)}></ListItemText>
+                    <ListItemText primary={stationIdList[parseInt(item)]+`(${parseInt(item)})`} secondary={handleTransferText(item)}></ListItemText>
                   </ListItem>
 
                   {/* <Divider light /> */}
                 </React.Fragment>
-              )
+              )}
             })}
           </List>
         </CardContent>

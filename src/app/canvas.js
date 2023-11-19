@@ -9,7 +9,10 @@ import FullscreenIcon from '@mui/icons-material/Fullscreen';
 
 import styles from './canvas.module.css'
 
-export default function Canvas(){
+import stationPos from './data/stationPos.json'
+import StationNode from './submodule/stationNode.js'
+
+export default function Canvas(props){
     return(
     <TransformWrapper
       initialScale={0.1}
@@ -25,7 +28,19 @@ export default function Canvas(){
             <Button onClick={() => resetTransform()} startIcon={<FullscreenIcon />}>重置</Button>
           </ButtonGroup>
           <TransformComponent wrapperClass={styles.canvasWrapper}>
-          <canvas className={styles.thecanvas} width={14173} height={11942} style={{backgroundImage:'url(\'lwt-min.jpg\')', imageRendering: 'crisp-edges'}}></canvas>
+          <canvas className={styles.thecanvas} width={14173} height={11942} style={{backgroundImage:'url(\'lwt-min.jpg\')', imageRendering: 'crisp-edges'}}>
+          </canvas>
+            {props.metadata.path.map((item, index)=>{
+              console.log(`${item} => ${stationPos[item].id}`)
+              return (
+                <StationNode 
+                x={stationPos[item].x} 
+                y={stationPos[(item)].y} 
+                key={stationPos[item].id} 
+                sid={stationPos[item].id}
+                ></StationNode>
+              )
+            })}
           </TransformComponent>
         </React.Fragment>
       )}
