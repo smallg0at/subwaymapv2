@@ -94,7 +94,7 @@ function findShortestPath(startID, endID, transferPenalty = 0) {
           }
         }
       }
-      console.log({ currentPath, currentLength, currentTransfers, currentTransferList })
+      // console.log({ currentPath, currentLength, currentTransfers, currentTransferList })
       if (currentLength < shortest.length) {
         shortest.path = currentPath;
         shortest.length = currentLength;
@@ -125,6 +125,13 @@ function findShortestPath(startID, endID, transferPenalty = 0) {
   }
   shortest.length = shortest.length - shortest.transfers * shortest.setPenalties
   shortest.time = (shortest.length / (16.67 * 60)) + shortest.transfers * 4.0
+  shortest.isTransfer = []
+  shortest.path.forEach((item, index)=>{
+    let isTransferStation = shortest.transferList.findIndex((item1) => {
+      return item1.id == parseInt(item)
+    })
+    shortest.isTransfer.push(isTransferStation)
+  })
   console.log(shortest)
   return shortest;
 }

@@ -31,7 +31,7 @@ export default function Canvas(props){
           <canvas className={styles.thecanvas} width={14173} height={11942} style={{backgroundImage:'url(\'lwt-min.jpg\')', imageRendering: 'crisp-edges'}}>
           </canvas>
             {props.metadata.path.map((item, index)=>{
-              console.log(`${item} => ${stationPos[item].id}`)
+              // console.log(`${item} => ${stationPos[item].id}`)
               return (
                 <StationNode 
                 x={stationPos[item].x} 

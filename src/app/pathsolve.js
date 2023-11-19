@@ -15,22 +15,16 @@ var keyIter = 0;
 
 export default function PathSolve(props) {
 
-  function handleTransferText(item) {
-    let isTransferStation = props.metadata.transferList.findIndex((item1) => {
-      return item1.id == parseInt(item)
-      console.log(`${item1.id}, ${parseInt(item)}, ${item1.id == parseInt(item)}`)
-    })
-    if (isTransferStation != -1) {
-      let dt = props.metadata.transferList[isTransferStation]
+  function handleTransferText(index) {
+    if (props.metadata.isTransfer[index] != -1) {
+      let dt = props.metadata.transferList[props.metadata.isTransfer[index]]
+      console.log(dt)
       return `在此换乘：${dt.prev}${dt.prev.includes('线') ? '' : ' 号线'} ➡ ${dt.to}${dt.to.includes('线') ? '' : ' 号线'}`;
     }
   }
 
   function handleIfIsTranfer(item, index) {
-    let isTransferStation = props.metadata.transferList.findIndex((item1) => {
-      return item1.id == parseInt(item)
-    })
-    if (isTransferStation != -1) return (<ChangeCircleIcon />)
+    if (props.metadata.isTransfer[index] != -1) return (<ChangeCircleIcon />)
     else if (props.metadata.path.length == index + 1) return (<LocationOnIcon />)
     else return (<ArrowDownwardIcon color='text.secondary' style={{ opacity: 0.3 }} />)
   }
@@ -89,7 +83,7 @@ export default function PathSolve(props) {
                     <ListItemIcon>
                       {handleIfIsTranfer(item, index)}
                     </ListItemIcon>
-                    <ListItemText primary={stationIdList[parseInt(item)]+`(${parseInt(item)})`} secondary={handleTransferText(item)}></ListItemText>
+                    <ListItemText primary={stationIdList[parseInt(item)]+`(${parseInt(item)})`} secondary={handleTransferText(index)}></ListItemText>
                   </ListItem>
 
                   {/* <Divider light /> */}
