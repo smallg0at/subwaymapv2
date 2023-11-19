@@ -20,7 +20,7 @@ export default function Canvas(props) {
   function updateLines(){
     var ctx = document.querySelector('#the-canvas').getContext('2d')
     ctx.reset()
-    ctx.strokeStyle = 'black'
+    ctx.strokeStyle = '#263238'
     ctx.lineWidth = 100
     if(props.metadata.path.length == 0) return;
     for(let i=1; i<props.metadata.path.length; i++){
@@ -59,6 +59,7 @@ export default function Canvas(props) {
                   y={stationPos[(item)].y}
                   key={stationPos[item].id}
                   sid={stationPos[item].id}
+                  sindex={index}
                   isTransfer={handleIfIsTranfer(index)}
                 ></StationNode>
               )

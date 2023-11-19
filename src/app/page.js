@@ -211,7 +211,7 @@ export default function Home() {
                   <MenuItem value={9999999}>最少换乘</MenuItem>
                 </Select>
               </FormControl>
-              <Button variant="contained" size='large' className={styles.goButton} endIcon={<SendIcon />} onClick={handleRouteClick} disabled={beginName == '' || endName == ''}>开始寻路！</Button>
+              <Button variant="contained" size='large' className={styles.goButton} endIcon={<SendIcon />} onClick={handleRouteClick} disabled={beginName == '' || endName == '' || beginName == endName}>开始寻路！</Button>
               <PathSolve
                 metadata={pathResult}>
               </PathSolve>
