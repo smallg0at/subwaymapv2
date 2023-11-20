@@ -11,8 +11,8 @@
   z-index: 100;
 }
 
-.toplevel>*, .formControl>*{
-  margin-bottom: 10px;
+.toplevel>*, .formControl>*:not(:last-child){
+  margin-bottom: 15px;
 }
 
 .canvasPane{
@@ -38,6 +38,17 @@
   border-radius: 5px 0 0 5px;
 }
 
+.mask{
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 10010;
+  background-color: rgba(255, 255, 255, 0.634);
+  backdrop-filter: blur(15px);
+}
+
 /* Dark Mode Specific Styles */
 @media screen and (prefers-color-scheme: dark) {
   .toplevel::-webkit-scrollbar {
@@ -46,5 +57,8 @@
 
   .toplevel::-webkit-scrollbar-thumb {
     background-color: rgb(97, 97, 97);
+  }
+  .mask{
+    background-color: rgba(0, 0, 0, 0.634);
   }
 }

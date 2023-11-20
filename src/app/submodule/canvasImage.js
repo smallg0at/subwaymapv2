@@ -1,18 +1,19 @@
 import Image from 'next/image'
-import submap from 'public/lwt-lossless.webp'
+import submap from '../../../public/lwt-lossless.webp'
  
-export default function Background() {
+export default function Background(props) {
   return (
     <Image
       alt="Beijing Subway Map"
       src={submap}
       placeholder='blur'
-      quality={95}
+      quality={100}
       fill
       sizes="100vw"
       style={{
         objectFit: 'cover',
       }}
+      onLoad={props.callMaskToDisappear()}
     />
   )
 }

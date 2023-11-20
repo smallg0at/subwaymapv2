@@ -152,6 +152,7 @@ export default function Home() {
   const [beginName, setBeginName] = React.useState('')
   const [endName, setEndName] = React.useState('')
 
+  const [maskStatus, setMaskStatus] = React.useState(true)
 
   function handleRouteClick() {
     let foundBeginId = stationIdList.findIndex((item) => { return item == beginName })
@@ -184,7 +185,7 @@ export default function Home() {
         <Grid container>
           <Grid xs={3}>
             <Paper className={styles.toplevel}>
-              {/* <Typography variant="h2">地铁线路图</Typography> */}
+              <Typography variant="h4" gutterBottom>地铁线路图</Typography>
               <FormControl fullWidth className={styles.formControl}>
                 <Autocomplete
                   disablePortal
@@ -224,9 +225,12 @@ export default function Home() {
             </Paper>
           </Grid>
           <Grid xs={9} className={styles.rightPanel}>
-            <Canvas metadata={pathResult}></Canvas>
+            <Canvas metadata={pathResult} callMaskToDisappear={()=>{setTimeout(() => {
+              setMaskStatus(false)
+            }, 1000);}}></Canvas>
           </Grid>
         </Grid>
+        <div className={styles.mask} style={{display: (maskStatus?'block':'none')}}></div>
       </main>
       <Analytics />
     </ThemeProvider>

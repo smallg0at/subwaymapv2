@@ -52,7 +52,7 @@ export default function Canvas(props) {
             <Button onClick={() => resetTransform()} startIcon={<FullscreenIcon />}>重置</Button>
           </ButtonGroup>
           <TransformComponent wrapperClass={styles.canvasWrapper}>
-            <CanvasImage />
+            <CanvasImage callMaskToDisappear={()=>props.callMaskToDisappear()}/>
             <canvas className={styles.thecanvas} id="the-canvas" width={14173} height={11942}></canvas>
             {props.metadata.path.map((item, index) => {
               // console.log(`${item} => ${stationPos[item].id}`)
