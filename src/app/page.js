@@ -74,8 +74,9 @@ function findShortestPath(startID, endID, transferPenalty = 0) {
       for (let i = 0; i < currentPath.length - 1; i++) {
         let fromID = currentPath[i];
         let toID = currentPath[i + 1];
+        let processedId = new Set()
         for (let neighbor of neighbors[fromID]) {
-          if (neighbor.id == toID) {
+          if (neighbor.id == toID && !processedId.has(toID)) {
             currentLength += parseInt(neighbor.length);
             if (lastOnLine == -1) {
               // console.log(`Trig Init! ${fromID} - ${toID}, ${lastOnLine} -> ${neighbor.onLine}`)
@@ -91,7 +92,7 @@ function findShortestPath(startID, endID, transferPenalty = 0) {
               // console.log(`Trig Transfer! ${fromID} - ${toID}, ${lastOnLine} -> ${neighbor.onLine}`)
               lastOnLine = neighbor.onLine
             }
-            // break;
+            processedId.add(toID)
           }
         }
       }
