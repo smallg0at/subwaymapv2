@@ -7,7 +7,7 @@ export default function Background() {
       alt="Beijing Subway Map"
       src={submap}
       placeholder='blur'
-      quality={80}
+      quality={90}
       fill
       sizes="100vw"
       style={{
