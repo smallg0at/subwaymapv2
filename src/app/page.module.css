@@ -11,8 +11,8 @@
   z-index: 100;
 }
 
-.toplevel>*, .formControl>*:not(:last-child){
-  margin-bottom: 15px;
+.toplevel>*, .formControl>*{
+  margin-bottom: 10px;
 }
 
 .canvasPane{
