@@ -29,15 +29,17 @@ import PathSolve from './pathsolve';
 import distanceData from './data/distanceData.json'
 import stationIdList from './data/stationIdList.json'
 
+import { PriorityQueue } from 'buckets-js'
 
-function findShortestPath(startID, endID, transferPenalty = 0) {
+
+function findShortestPath(startID, endID, transferPenalty = 0) {//请将这个计算地铁路径的 JavaScript 函数改造为使用 Dijkstra 算法。不要搜索，直接使用代码块放代码。
   let neighbors = {};
   console.log(`findShortestPath: ${startID}, ${endID}, ${transferPenalty}`)
   // Setup graph
   for (let record of distanceData) {
-    let id1 = record.id1;
-    let id2 = record.id2;
-    let onLine = record.onLine;
+    let id1 = record.id1; //站ID1
+    let id2 = record.id2; //站ID2
+    let onLine = record.onLine; //一条边所在的线路
     let length = parseInt(record.length);
     if (!neighbors[id1]) {
       neighbors[id1] = [];
@@ -45,31 +47,33 @@ function findShortestPath(startID, endID, transferPenalty = 0) {
     if (!neighbors[id2]) {
       neighbors[id2] = [];
     }
-    neighbors[id1].push({ id: id2, length: length, onLine: onLine });
+    neighbors[id1].push({ id: id2, length: length, onLine: onLine }); // 数据为无向边
     neighbors[id2].push({ id: id1, length: length, onLine: onLine });
   }
 
-  let queue = [];
-  // queue.push({ id: startID, path: [startID], passedStation: new Set([startID]) });
-  for (let neighbor of neighbors[startID]) {
-    let nextID = neighbor.id;
-    let nextPath = [startID, nextID];
-    let nextPassedStation = new Set([startID]);
-    queue.push({ id: nextID, path: nextPath, passedStation: nextPassedStation });
-  }
+
+  let queue = new PriorityQueue((a, b) => a.length < b.length); 
+
+  queue.enqueue({ id: startID, length: 0, path: [startID]});
+
+  let visited = {};
+  visited[startID] = 0;
+
   let shortest = { path: [], length: 1e100, setPenalties: transferPenalty, transferList: [], isValid: false, startStationInfo: { name: "", line: "" }, time: 0.0 };
   console.log(neighbors[startID])
-  while (queue.length > 0) {
-    let current = queue.shift();
+
+  while (!queue.isEmpty()) {
+
+    let current = queue.dequeue();
     let currentID = current.id;
+    let currentLength = current.length;
     let currentPath = current.path;
-    let currentPassedStation = current.passedStation;
-    let currentstartStationInfo = { name: "", line: "" }
-    let currentTransferList = []
+    
+
     if (currentID == endID) {
       shortest.isValid = true
-      let currentLength = 0;
       let currentTransfers = 0;
+      let currentTransferList = []
       let lastOnLine = -1;
       for (let i = 0; i < currentPath.length - 1; i++) {
         let fromID = currentPath[i];
@@ -77,9 +81,7 @@ function findShortestPath(startID, endID, transferPenalty = 0) {
         let processedId = new Set()
         for (let neighbor of neighbors[fromID]) {
           if (neighbor.id == toID && !processedId.has(toID)) {
-            currentLength += parseInt(neighbor.length);
             if (lastOnLine == -1) {
-              // console.log(`Trig Init! ${fromID} - ${toID}, ${lastOnLine} -> ${neighbor.onLine}`)
               lastOnLine = neighbor.onLine
             } else if (lastOnLine != neighbor.onLine) {
               currentLength += transferPenalty;
@@ -89,44 +91,45 @@ function findShortestPath(startID, endID, transferPenalty = 0) {
                 prev: lastOnLine,
                 to: neighbor.onLine
               })
-              // console.log(`Trig Transfer! ${fromID} - ${toID}, ${lastOnLine} -> ${neighbor.onLine}`)
               lastOnLine = neighbor.onLine
             }
             processedId.add(toID)
           }
         }
       }
-      // console.log({ currentPath, currentLength, currentTransfers, currentTransferList })
+      console.log(current, currentTransfers)
       if (currentLength < shortest.length) {
         shortest.path = currentPath;
         shortest.length = currentLength;
         shortest.transfers = currentTransfers;
-        shortest.transferList = currentTransferList;
-        // shortest.startStationInfo = currentstartStationInfo;
-        // console.log(neighbors[startID].find((item, index) => {
-        //   return item.id == currentPath[0]
-        // }))
+        shortest.transferList = currentTransferList
         shortest.startStationInfo = {
           name: startID, line: neighbors[startID].find((item, index) => {
             return item.id == currentPath[1]
           }).onLine
         }
       }
-      continue;
+      // break;
     }
+
     for (let neighbor of neighbors[currentID]) {
       let nextID = neighbor.id;
-      if (currentPassedStation.has(nextID)) {
-        continue
-      } else {
-        let nextPath = [...currentPath, nextID];
-        let nextPassedStation = currentPassedStation.add(currentID);
-        queue.push({ id: nextID, path: nextPath, passedStation: nextPassedStation });
+      let nextLength = currentLength + parseInt(neighbor.length);
+
+      if (visited[nextID] && visited[nextID] <= nextLength) {
+        continue;
       }
+
+      let nextPath = [...currentPath, nextID];
+      queue.enqueue({ id: nextID, length: nextLength, path: nextPath });
+
+      visited[nextID] = nextLength;
     }
   }
+
   shortest.length = shortest.length - shortest.transfers * shortest.setPenalties
   shortest.time = (shortest.length / (16.67 * 60)) + shortest.transfers * 4.0
+
   shortest.isTransfer = []
   shortest.path.forEach((item, index)=>{
     let isTransferStation = shortest.transferList.findIndex((item1) => {
@@ -137,6 +140,7 @@ function findShortestPath(startID, endID, transferPenalty = 0) {
   console.log(shortest)
   return shortest;
 }
+
 
 
 export default function Home() {

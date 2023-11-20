@@ -18,7 +18,7 @@ export default function PathSolve(props) {
   function handleTransferText(index) {
     if (props.metadata.isTransfer[index] != -1) {
       let dt = props.metadata.transferList[props.metadata.isTransfer[index]]
-      console.log(dt)
+      // console.log(dt)
       return `在此换乘：${dt.prev}${dt.prev.includes('线') ? '' : ' 号线'} ➡ ${dt.to}${dt.to.includes('线') ? '' : ' 号线'}`;
     }
   }
