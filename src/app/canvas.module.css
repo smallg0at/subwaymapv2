@@ -1,5 +1,6 @@
 .thecanvas {
     /* border-radius: 50px; */
+    z-index: 9997;
 }
 
 

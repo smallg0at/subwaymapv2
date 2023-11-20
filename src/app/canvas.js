@@ -11,6 +11,9 @@ import styles from './canvas.module.css'
 
 import stationPos from './data/stationPos.json'
 import StationNode from './submodule/stationNode.js'
+import CanvasImage from './submodule/canvasImage.js'
+
+import Image from 'next/image'
 
 export default function Canvas(props) {
   function handleIfIsTranfer(index) {
@@ -49,8 +52,8 @@ export default function Canvas(props) {
             <Button onClick={() => resetTransform()} startIcon={<FullscreenIcon />}>重置</Button>
           </ButtonGroup>
           <TransformComponent wrapperClass={styles.canvasWrapper}>
-            <canvas className={styles.thecanvas} id="the-canvas" width={14173} height={11942} style={{ backgroundImage: 'url(\'lwt-min.jpg\')', imageRendering: 'crisp-edges' }}>
-            </canvas>
+            <CanvasImage />
+            <canvas className={styles.thecanvas} id="the-canvas" width={14173} height={11942}></canvas>
             {props.metadata.path.map((item, index) => {
               // console.log(`${item} => ${stationPos[item].id}`)
               return (
