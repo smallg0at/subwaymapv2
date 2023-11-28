@@ -8,7 +8,6 @@ import styleClasses from './page.customs.css'
 import { Paper, Typography, Button, Select, MenuItem, InputLabel, FormControl, ButtonGroup } from '@mui/material'
 import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete'
-import nameList from './nameList.json'
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -26,6 +25,7 @@ import { Analytics } from '@vercel/analytics/react';
 import Canvas from './canvas';
 import PathSolve from './pathsolve';
 
+import nameList from './data/nameList.json'
 import distanceData from './data/distanceData.json'
 import stationIdList from './data/stationIdList.json'
 

@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Subway Map
 
-## Getting Started
+A subway map web utility written with React + Next.js + MUI. Full beijing subway data included. [🔗 Try it now!*](https://beijingsubwaymap.vercel.app/)
 
-First, run the development server:
+\* Visitors from specific regions may experience issue accessing this. 
+
+## Features
+
+- Very friendly UI
+- Dark mode
+- Three pathfinding options: Shortest, Fastest, Least Transfers
+
+## Init
+
+```bash
+npm install
+```
+
+## Testing
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Building
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Make sure the dev server is closed before building.
 
-## Learn More
+```bash
+npm run build
+npm start
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Data Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+All data is stored in `src/app/data`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- `distanceData.json`: Map edge information, for pathfinding
+- `nameList.json`: Possible station name input strings
+- `stationIdList.json`: index -> station name list. may contain null values.
+- `stationPos.json`: Station position on image, used for drawing.
 
-## Deploy on Vercel
+Note:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Station numeric ID MUST be unique for each station, but can be non-cumulative.
+- Interconnected stations should use the same ID.
+- Station name doesn't matter as none of the pathfinding use it, you can tweak it anyway.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## About
+
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+Data was last updated on Nov. 2023.
