@@ -44,6 +44,22 @@ export default function PathSolve(props) {
       return 6 + (Math.ceil((distance - 32) / 20))
     }
   }
+  
+  function handleStartDiffText(){
+    if(props.startInput != stationIdList[props.metadata.path[0]]){
+      return <Typography variant="body2" style={{marginTop: '5px'}}>{props.startInput} 在 {stationIdList[props.metadata.path[0]]} 站附近</Typography>
+    } else {
+      return <React.Fragment />
+    }
+  }
+
+  function handleEndDiffText(){
+    if(props.endInput != stationIdList[props.metadata.path[props.metadata.path.length-1]]){
+      return <Typography variant="body2" style={{marginTop: '5px'}}>{props.endInput} 在 {stationIdList[props.metadata.path[props.metadata.path.length-1]]} 站附近</Typography>
+    }else {
+      return <React.Fragment />
+    }
+  }
 
   return (
     <Grid container direction={'column'} sx={{ display: (props.metadata.isValid) ? 'flex' : 'none' }}>
@@ -63,6 +79,7 @@ export default function PathSolve(props) {
             <Typography fontSize={'20px'}>票价￥{handleTicketPrice(props.metadata.length / 1000)}</Typography>
             </Grid>
           </Grid>
+        
         </CardContent>
       </Card>
       <Card variant='outlined'>
@@ -83,7 +100,7 @@ export default function PathSolve(props) {
                     <ListItemIcon>
                       {handleIfIsTranfer(item, index)}
                     </ListItemIcon>
-                    <ListItemText primary={stationIdList[parseInt(item)]+`(${parseInt(item)})`} secondary={handleTransferText(index)}></ListItemText>
+                    <ListItemText primary={stationIdList[parseInt(item)]} secondary={handleTransferText(index)}></ListItemText>
                   </ListItem>
 
                   {/* <Divider light /> */}

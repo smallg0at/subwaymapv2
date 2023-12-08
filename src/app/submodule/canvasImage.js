@@ -9,11 +9,12 @@ export default function Background(props) {
       placeholder='blur'
       quality={100}
       fill
-      sizes="100vw"
+      sizes="7000px"
       style={{
         objectFit: 'cover',
       }}
       onLoad={props.callMaskToDisappear()}
+      unoptimized
     />
   )
 }

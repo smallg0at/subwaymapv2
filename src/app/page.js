@@ -2,37 +2,32 @@
 
 import * as React from 'react';
 
-import Image from 'next/image'
 import styles from './page.module.css'
-import styleClasses from './page.customs.css'
-import { Paper, Typography, Button, Select, MenuItem, InputLabel, FormControl, ButtonGroup } from '@mui/material'
+import { Paper, Typography, Button, Select, MenuItem, InputLabel, FormControl, ButtonGroup, CircularProgress } from '@mui/material'
 import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete'
-import nameList from './nameList.json'
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import FolderIcon from '@mui/icons-material/Folder';
 import SendIcon from '@mui/icons-material/Send';
 import Grid from '@mui/material/Unstable_Grid2';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Head from 'next/head'
 import { Analytics } from '@vercel/analytics/react';
+
+import DirectionsSubwayIcon from '@mui/icons-material/DirectionsSubway';
 
 import Canvas from './canvas';
 import PathSolve from './pathsolve';
 
 import distanceData from './data/distanceData.json'
 import stationIdList from './data/stationIdList.json'
+import nameList from './data/nameListData.json'
+import attractionData from "./data/attractionData.json";
 
 import { PriorityQueue } from 'buckets-js'
 
 
-function findShortestPath(startID, endID, transferPenalty = 0) {//请将这个计算地铁路径的 JavaScript 函数改造为使用 Dijkstra 算法。不要搜索，直接使用代码块放代码。
+function findShortestPath(startID, endID, transferPenalty = 0) {
   let neighbors = {};
   console.log(`findShortestPath: ${startID}, ${endID}, ${transferPenalty}`)
   // Setup graph
@@ -52,9 +47,9 @@ function findShortestPath(startID, endID, transferPenalty = 0) {//请将这个�
   }
 
 
-  let queue = new PriorityQueue((a, b) => a.length < b.length); 
+  let queue = new PriorityQueue((a, b) => a.length < b.length);
 
-  queue.enqueue({ id: startID, length: 0, path: [startID]});
+  queue.enqueue({ id: startID, length: 0, path: [startID] });
 
   let visited = {};
   visited[startID] = 0;
@@ -68,7 +63,7 @@ function findShortestPath(startID, endID, transferPenalty = 0) {//请将这个�
     let currentID = current.id;
     let currentLength = current.length;
     let currentPath = current.path;
-    
+
 
     if (currentID == endID) {
       shortest.isValid = true
@@ -131,7 +126,7 @@ function findShortestPath(startID, endID, transferPenalty = 0) {//请将这个�
   shortest.time = (shortest.length / (16.67 * 60)) + shortest.transfers * 4.0
 
   shortest.isTransfer = []
-  shortest.path.forEach((item, index)=>{
+  shortest.path.forEach((item, index) => {
     let isTransferStation = shortest.transferList.findIndex((item1) => {
       return item1.id == parseInt(item)
     })
@@ -154,9 +149,21 @@ export default function Home() {
 
   const [maskStatus, setMaskStatus] = React.useState(true)
 
+
+
   function handleRouteClick() {
     let foundBeginId = stationIdList.findIndex((item) => { return item == beginName })
     let foundEndId = stationIdList.findIndex((item) => { return item == endName })
+    if (foundBeginId == -1) {
+      if (Object.hasOwn(attractionData, beginName)) {
+        foundBeginId = attractionData[beginName]
+      }
+    }
+    if (foundEndId == -1) {
+      if (Object.hasOwn(attractionData, endName)) {
+        foundEndId = attractionData[endName]
+      }
+    }
     if (foundBeginId == -1 || foundEndId == -1) {
       alert("没有找到对应的站点信息")
       throw "BeginOrEndIdNotFound"
@@ -185,7 +192,10 @@ export default function Home() {
         <Grid container>
           <Grid xs={3}>
             <Paper className={styles.toplevel}>
-              <Typography variant="h4" gutterBottom>地铁线路图</Typography>
+              <div className={styles.logo}>
+                <DirectionsSubwayIcon fontSize="large" />
+
+              </div>
               <FormControl fullWidth className={styles.formControl}>
                 <Autocomplete
                   disablePortal
@@ -220,17 +230,23 @@ export default function Home() {
               </FormControl>
               <Button variant="contained" size='large' className={styles.goButton} endIcon={<SendIcon />} onClick={handleRouteClick} disabled={beginName == '' || endName == '' || beginName == endName}>开始寻路！</Button>
               <PathSolve
-                metadata={pathResult}>
+                metadata={pathResult}
+                startInput={beginName}
+                endInput={endName}>
               </PathSolve>
             </Paper>
           </Grid>
           <Grid xs={9} className={styles.rightPanel}>
-            <Canvas metadata={pathResult} callMaskToDisappear={()=>{setTimeout(() => {
-              setMaskStatus(false)
-            }, 1000);}}></Canvas>
+            <Canvas metadata={pathResult} callMaskToDisappear={() => {
+              setTimeout(() => {
+                setMaskStatus(false)
+              }, 1000);
+            }}></Canvas>
           </Grid>
         </Grid>
-        <div className={styles.mask} style={{display: (maskStatus?'block':'none')}}></div>
+        <div className={styles.mask} style={{ display: (maskStatus ? 'flex' : 'none') }}>
+          <CircularProgress disableShrink />
+        </div>
       </main>
       <Analytics />
     </ThemeProvider>
