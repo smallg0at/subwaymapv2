@@ -19,6 +19,7 @@ import DirectionsSubwayIcon from '@mui/icons-material/DirectionsSubway';
 import Canvas from './canvas';
 import PathSolve from './pathsolve';
 
+import nameList from './data/nameList.json'
 import distanceData from './data/distanceData.json'
 import stationIdList from './data/stationIdList.json'
 import nameList from './data/nameListData.json'
