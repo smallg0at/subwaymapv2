@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 import styles from './page.module.css'
-import { Paper, Typography, Button, Select, MenuItem, InputLabel, FormControl, ButtonGroup, CircularProgress } from '@mui/material'
+import { Paper, Typography, Button, Select, MenuItem, InputLabel, FormControl, IconButton, CircularProgress } from '@mui/material'
 import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete'
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -18,6 +18,7 @@ import DirectionsSubwayIcon from '@mui/icons-material/DirectionsSubway';
 
 import Canvas from './canvas';
 import PathSolve from './pathsolve';
+import AboutModal from './submodule/aboutModal.js'
 
 import distanceData from './data/distanceData.json'
 import stationIdList from './data/stationIdList.json'
@@ -192,9 +193,11 @@ export default function Home() {
         <Grid container>
           <Grid xs={3}>
             <Paper className={styles.toplevel}>
-              <div className={styles.logo}>
-                <DirectionsSubwayIcon fontSize="large" />
-
+              <div className={styles.header}>
+                <div className={styles.logo}>
+                  <DirectionsSubwayIcon fontSize="large" />
+                </div>
+                <AboutModal />
               </div>
               <FormControl fullWidth className={styles.formControl}>
                 <Autocomplete
