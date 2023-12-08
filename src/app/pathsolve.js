@@ -30,6 +30,9 @@ export default function PathSolve(props) {
   }
 
   function handleTicketPrice(distance) {
+    if(props.isTravelTicket){
+      return 0
+    }
     if (distance < 0 && !isNaN(distance)) {
       return 0
     } else if (distance <= 6) {
@@ -76,7 +79,7 @@ export default function PathSolve(props) {
             <Typography fontSize={'20px'}>换乘 {props.metadata.transfers} 次</Typography>
             </Grid>
             <Grid item xs={6}>
-            <Typography fontSize={'20px'}>票价￥{handleTicketPrice(props.metadata.length / 1000)}</Typography>
+            <Typography fontSize={props.isTravelTicket?'12px':'20px'}>票价{props.isTravelTicket?"已包含在旅游票":"￥"+handleTicketPrice(props.metadata.length / 1000)}</Typography>
             </Grid>
           </Grid>
         

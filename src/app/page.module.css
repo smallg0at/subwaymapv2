@@ -35,7 +35,7 @@
 }
 
 .toplevel::-webkit-scrollbar-thumb {
-  background-color: rgb(33, 150, 243);
+  background-color: #4caf50;
   border-radius: 5px 0 0 5px;
 }
 
@@ -54,7 +54,7 @@
 }
 
 .logo{
-  background-color: rgba(33, 149, 243, 0.541);
+  border: 3px rgb(76, 175, 79) solid;
   padding: 8px;
   border-radius: 1000px;
   display: flex;

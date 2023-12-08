@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { Button, ButtonGroup } from "@mui/material";
+import { Button, ButtonGroup, Fab, Box } from "@mui/material";
 
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
@@ -46,11 +46,11 @@ export default function Canvas(props) {
     >
       {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
         <React.Fragment>
-          <ButtonGroup className={styles.tools} variant="contained">
-            <Button onClick={() => zoomIn()} startIcon={<ZoomInIcon />}>放大</Button>
-            <Button onClick={() => zoomOut()} startIcon={<ZoomOutIcon />}>缩小</Button>
-            <Button onClick={() => resetTransform()} startIcon={<FullscreenIcon />}>重置</Button>
-          </ButtonGroup>
+          <Box className={styles.tools} variant="contained">
+            <Fab onClick={() => zoomIn()} color="primary"><ZoomInIcon /></Fab>
+            {/* <Fab onClick={() => resetTransform()} color="primary" size="small"><FullscreenIcon /></Fab> */}
+            <Fab onClick={() => zoomOut()} color="primary"><ZoomOutIcon /></Fab>
+          </Box>
           <TransformComponent wrapperClass={styles.canvasWrapper}>
             <CanvasImage callMaskToDisappear={()=>props.callMaskToDisappear()}/>
             <canvas className={styles.thecanvas} id="the-canvas" width={14173} height={11942}></canvas>

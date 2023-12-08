@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 import styles from './page.module.css'
-import { Paper, Typography, Button, Select, MenuItem, InputLabel, FormControl, IconButton, CircularProgress } from '@mui/material'
+import { Paper, Button, Select, MenuItem, InputLabel, FormControl, CircularProgress, FormControlLabel, Checkbox } from '@mui/material'
 import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete'
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -26,6 +26,8 @@ import nameList from './data/nameListData.json'
 import attractionData from "./data/attractionData.json";
 
 import { PriorityQueue } from 'buckets-js'
+
+import { green, amber } from '@mui/material/colors';
 
 
 function findShortestPath(startID, endID, transferPenalty = 0) {
@@ -150,7 +152,7 @@ export default function Home() {
 
   const [maskStatus, setMaskStatus] = React.useState(true)
 
-
+  const [isTravelTicket, setIfTravelTicket] = React.useState(false)
 
   function handleRouteClick() {
     let foundBeginId = stationIdList.findIndex((item) => { return item == beginName })
@@ -176,6 +178,8 @@ export default function Home() {
       createTheme({
         palette: {
           mode: prefersDarkMode ? 'dark' : 'light',
+          primary: green,
+          secondary: amber,
         },
       }),
     [prefersDarkMode],
@@ -192,10 +196,10 @@ export default function Home() {
       <main className={styles.main}>
         <Grid container>
           <Grid xs={3}>
-            <Paper className={styles.toplevel}>
+            <Paper className={styles.toplevel} >
               <div className={styles.header}>
                 <div className={styles.logo}>
-                  <DirectionsSubwayIcon fontSize="large" />
+                  <DirectionsSubwayIcon fontSize="large" color='primary' />
                 </div>
                 <AboutModal />
               </div>
@@ -230,12 +234,14 @@ export default function Home() {
                   <MenuItem value={2000}>时间最短</MenuItem>
                   <MenuItem value={9999999}>最少换乘</MenuItem>
                 </Select>
+                <FormControlLabel control={<Checkbox value={isTravelTicket} onChange={(event=>{setIfTravelTicket(event.target.value)})} />} label="使用旅游票" />
               </FormControl>
               <Button variant="contained" size='large' className={styles.goButton} endIcon={<SendIcon />} onClick={handleRouteClick} disabled={beginName == '' || endName == '' || beginName == endName}>开始寻路！</Button>
               <PathSolve
                 metadata={pathResult}
                 startInput={beginName}
-                endInput={endName}>
+                endInput={endName}
+                isTravelTicket={isTravelTicket}>
               </PathSolve>
             </Paper>
           </Grid>

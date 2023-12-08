@@ -1,7 +1,8 @@
-import { Typography, IconButton, Box } from "@mui/material"
+import { Typography, IconButton, Box, Button, Link, Divider } from "@mui/material"
 import * as React from 'react'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import Modal from '@mui/material/Modal';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 const style = {
     position: 'absolute',
@@ -31,9 +32,13 @@ export default function AboutModal(props) {
                 <Box sx={style}>
                     <Typography variant="h4">北京地铁图</Typography>
                     <Typography variant="h5">Copyright YC L, 2023</Typography>
+                    <Divider></Divider>
                     <Typography variant="body1">初试 React，做了个蛮正常的东西</Typography>
-                    <Typography variant="body1">LICENSE: MIT License</Typography>
-               </Box>
+                    <Typography variant="body1" style={{marginBottom: '15px'}}>LICENSE: MIT License</Typography>
+                    <Link href="https://github.com/smallg0at/subwaymapv2" target="_blank" rel="noopener">
+                        <Button startIcon={<GitHubIcon />}>GitHub</Button>
+                    </Link>
+                </Box>
             </Modal>
         </React.Fragment>
     )
