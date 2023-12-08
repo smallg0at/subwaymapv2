@@ -29,6 +29,8 @@ import { PriorityQueue } from 'buckets-js'
 
 import { green, amber } from '@mui/material/colors';
 
+import { SpeedInsights } from "@vercel/speed-insights/next"
+
 
 function findShortestPath(startID, endID, transferPenalty = 0) {
   let neighbors = {};
@@ -191,6 +193,7 @@ export default function Home() {
       <Head>
         <title></title>
         <meta name='description' content='用 React 写的地铁导航系统' />
+        <SpeedInsights/>
       </Head>
       <CssBaseline />
       <main className={styles.main}>

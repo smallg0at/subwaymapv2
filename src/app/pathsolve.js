@@ -65,7 +65,7 @@ export default function PathSolve(props) {
   }
 
   function handleTravelText(isTravelTicket) {
-    console.log(`UPDATE TVT: ${isTravelTicket}`)
+    // console.log(`UPDATE TVT: ${isTravelTicket}`)
     if (isTravelTicket) { return (
         <span style={{fontSize: '12px'}}>已包含在旅游票</span>
     ); }
