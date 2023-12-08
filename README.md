@@ -13,6 +13,7 @@ A subway map web utility written with React + Next.js + MUI. Full beijing subway
 - Very friendly UI
 - Dark mode
 - Three pathfinding options: Shortest, Fastest, Least Transfers
+- Travel Ticket option - sort of? Implemented cruelly.
 
 ## Init
 

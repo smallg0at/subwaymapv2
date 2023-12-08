@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 import styles from './page.module.css'
-import { Paper, Button, Select, MenuItem, InputLabel, FormControl, CircularProgress, FormControlLabel, Checkbox } from '@mui/material'
+import { Paper, Button, Select, MenuItem, InputLabel, FormControl, CircularProgress, FormControlLabel, Switch } from '@mui/material'
 import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete'
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -234,7 +234,7 @@ export default function Home() {
                   <MenuItem value={2000}>时间最短</MenuItem>
                   <MenuItem value={9999999}>最少换乘</MenuItem>
                 </Select>
-                <FormControlLabel control={<Checkbox value={isTravelTicket} onChange={(event=>{setIfTravelTicket(event.target.value)})} />} label="使用旅游票" />
+                <FormControlLabel control={<Switch value={isTravelTicket} onChange={(event=>{setIfTravelTicket(event.target.checked)})} />} label="使用旅游票" />
               </FormControl>
               <Button variant="contained" size='large' className={styles.goButton} endIcon={<SendIcon />} onClick={handleRouteClick} disabled={beginName == '' || endName == '' || beginName == endName}>开始寻路！</Button>
               <PathSolve

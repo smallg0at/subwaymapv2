@@ -30,7 +30,7 @@ export default function PathSolve(props) {
   }
 
   function handleTicketPrice(distance) {
-    if(props.isTravelTicket){
+    if (props.isTravelTicket) {
       return 0
     }
     if (distance < 0 && !isNaN(distance)) {
@@ -47,42 +47,52 @@ export default function PathSolve(props) {
       return 6 + (Math.ceil((distance - 32) / 20))
     }
   }
-  
-  function handleStartDiffText(){
-    if(props.startInput != stationIdList[props.metadata.path[0]]){
-      return <Typography variant="body2" style={{marginTop: '5px'}}>{props.startInput} 在 {stationIdList[props.metadata.path[0]]} 站附近</Typography>
+
+  function handleStartDiffText() {
+    if (props.startInput != stationIdList[props.metadata.path[0]]) {
+      return <Typography variant="body2" style={{ marginTop: '5px' }}>{props.startInput} 在 {stationIdList[props.metadata.path[0]]} 站附近</Typography>
     } else {
       return <React.Fragment />
     }
   }
 
-  function handleEndDiffText(){
-    if(props.endInput != stationIdList[props.metadata.path[props.metadata.path.length-1]]){
-      return <Typography variant="body2" style={{marginTop: '5px'}}>{props.endInput} 在 {stationIdList[props.metadata.path[props.metadata.path.length-1]]} 站附近</Typography>
-    }else {
+  function handleEndDiffText() {
+    if (props.endInput != stationIdList[props.metadata.path[props.metadata.path.length - 1]]) {
+      return <Typography variant="body2" style={{ marginTop: '5px' }}>{props.endInput} 在 {stationIdList[props.metadata.path[props.metadata.path.length - 1]]} 站附近</Typography>
+    } else {
       return <React.Fragment />
+    }
+  }
+
+  function handleTravelText(isTravelTicket) {
+    console.log(`UPDATE TVT: ${isTravelTicket}`)
+    if (isTravelTicket) { return (
+        <span style={{fontSize: '12px'}}>已包含在旅游票</span>
+    ); }
+    else {
+      return "￥" + handleTicketPrice(props.metadata.length / 1000)
     }
   }
 
   return (
     <Grid container direction={'column'} sx={{ display: (props.metadata.isValid) ? 'flex' : 'none' }}>
-      <Card variant='outlined' style={{marginBottom: '15px'}}>
-        <CardContent style={{paddingBottom: '16px'}}>
-        <Grid container>
+      <Card variant='outlined' style={{ marginBottom: '15px' }}>
+        <CardContent style={{ paddingBottom: '16px' }}>
+          <Grid container>
             <Grid item xs={6}>
-            <Typography fontSize={'20px'} gutterBottom>{Math.ceil(props.metadata.time)} 分钟</Typography>
+              <Typography fontSize={'20px'} gutterBottom>{Math.ceil(props.metadata.time)} 分钟</Typography>
             </Grid>
             <Grid item xs={6}>
-            <Typography fontSize={'20px'} gutterBottom>{(props.metadata.length / 1000).toFixed(1)}km</Typography>
+              <Typography fontSize={'20px'} gutterBottom>{(props.metadata.length / 1000).toFixed(1)}km</Typography>
             </Grid>
             <Grid item xs={6}>
-            <Typography fontSize={'20px'}>换乘 {props.metadata.transfers} 次</Typography>
+              <Typography fontSize={'20px'}>换乘 {props.metadata.transfers} 次</Typography>
             </Grid>
             <Grid item xs={6}>
-            <Typography fontSize={props.isTravelTicket?'12px':'20px'}>票价{props.isTravelTicket?"已包含在旅游票":"￥"+handleTicketPrice(props.metadata.length / 1000)}</Typography>
+              <Typography fontSize={'20px'}>票价 {handleTravelText(props.isTravelTicket)}</Typography>
             </Grid>
           </Grid>
-        
+
         </CardContent>
       </Card>
       <Card variant='outlined'>
@@ -93,22 +103,23 @@ export default function PathSolve(props) {
               <ListItemIcon>
                 <LocationOnIcon />
               </ListItemIcon>
-              <ListItemText primary={stationIdList[props.metadata.startStationInfo.name]+`(${props.metadata.startStationInfo.name})`} secondary={`乘坐 ${props.metadata.startStationInfo.line}${props.metadata.startStationInfo.line.includes('线') ? '' : ' 号线'}`}></ListItemText>
+              <ListItemText primary={stationIdList[props.metadata.startStationInfo.name] + `(${props.metadata.startStationInfo.name})`} secondary={`乘坐 ${props.metadata.startStationInfo.line}${props.metadata.startStationInfo.line.includes('线') ? '' : ' 号线'}`}></ListItemText>
             </ListItem>
             {props.metadata.path.map((item, index) => {
-              if(index > 0){
-              return (
-                <React.Fragment key={keyIter++}>
-                  <ListItem disableGutters>
-                    <ListItemIcon>
-                      {handleIfIsTranfer(item, index)}
-                    </ListItemIcon>
-                    <ListItemText primary={stationIdList[parseInt(item)]} secondary={handleTransferText(index)}></ListItemText>
-                  </ListItem>
+              if (index > 0) {
+                return (
+                  <React.Fragment key={keyIter++}>
+                    <ListItem disableGutters>
+                      <ListItemIcon>
+                        {handleIfIsTranfer(item, index)}
+                      </ListItemIcon>
+                      <ListItemText primary={stationIdList[parseInt(item)]} secondary={handleTransferText(index)}></ListItemText>
+                    </ListItem>
 
-                  {/* <Divider light /> */}
-                </React.Fragment>
-              )}
+                    {/* <Divider light /> */}
+                  </React.Fragment>
+                )
+              }
             })}
           </List>
         </CardContent>
