@@ -24,7 +24,7 @@
   width: 100%;
 }
 
-.rightPane{
+.rightPanel{
   position: relative;
 }
 
@@ -69,6 +69,24 @@
   align-items: center;
   justify-content:space-between;
   margin-bottom: 20px;
+}
+
+@media screen and (max-width: 600px){
+  .toplevel{
+    height: 70vh;
+    z-index: 10099;
+  }
+  .rightPanel{
+    height: 30vh;
+  }
+  .header{
+    position: fixed;
+    z-index: 11111;
+    top: 1em;
+    background-color: #000000c6;
+    border-radius: 10px;
+    padding: 6px;
+  }
 }
 
 /* Dark Mode Specific Styles */

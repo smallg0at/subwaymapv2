@@ -14,11 +14,14 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 'max(600px, 50vw)',
+    width: 'min(600px, 90vw)',
+    maxHeight: '60vh',
     bgcolor: 'background.paper',
     boxShadow: 24,
     borderRadius: '10px',
     p: 4,
+    overflow: "auto",
+    zIndex: 10010
 };
 
 export default function AboutModal() {

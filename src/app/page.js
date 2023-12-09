@@ -9,9 +9,11 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
+import FormLabel from '@mui/material/FormLabel';
 import CircularProgress from "@mui/material/CircularProgress";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete'
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -38,6 +40,9 @@ import { PriorityQueue } from 'buckets-js'
 import { green, amber } from '@mui/material/colors';
 
 import { SpeedInsights } from "@vercel/speed-insights/next"
+
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 
 
 function findShortestPath(startID, endID, transferPenalty = 0) {
@@ -149,6 +154,13 @@ function findShortestPath(startID, endID, transferPenalty = 0) {
   return shortest;
 }
 
+function handleModuleSize(){
+  if(window.innerWidth > 600){
+    return "medium"
+  } else {
+    return "small"
+  }
+}
 
 
 export default function Home() {
@@ -162,7 +174,7 @@ export default function Home() {
 
   const [maskStatus, setMaskStatus] = React.useState(true)
 
-  const [isTravelTicket, setIfTravelTicket] = React.useState(false)
+  const [isTravelTicket, setIfTravelTicket] = React.useState('none')
 
   function handleRouteClick() {
     let foundBeginId = stationIdList.findIndex((item) => { return item == beginName })
@@ -195,26 +207,29 @@ export default function Home() {
     [prefersDarkMode],
   );
 
+  
+
 
   return (
     <ThemeProvider theme={theme}>
       <Head>
         <title></title>
         <meta name='description' content='用 React 写的地铁导航系统' />
-        <SpeedInsights/>
+        <SpeedInsights />
       </Head>
       <CssBaseline />
       <main className={styles.main}>
-        <Grid container>
-          <Grid xs={3}>
+        <Grid container direction={{xs: 'column-reverse', sm: 'row'}}>
+          <Grid xs={12} sm={6} md={4} lg={3}>
             <Paper className={styles.toplevel} >
               <div className={styles.header}>
-                <div className={styles.logo} style={{backgroundColor: 'background.paper'}}>
+                <div className={styles.logo} style={{ backgroundColor: 'background.paper' }}>
                   <DirectionsSubwayIcon fontSize="large" color='primary' />
                 </div>
                 <AboutModal />
               </div>
               <FormControl fullWidth className={styles.formControl}>
+              <FormLabel id="places-label">起终点</FormLabel>
                 <Autocomplete
                   disablePortal
                   id="combo-box-begin"
@@ -233,19 +248,36 @@ export default function Home() {
                 />
               </FormControl>
               <FormControl fullWidth className={styles.formControl}>
-                <InputLabel id="algorithm-label">策略</InputLabel>
-                <Select
+                <FormLabel id="algorithm-label">策略</FormLabel>
+                <ToggleButtonGroup
                   labelId="algorithm-label"
                   id="algorithm-select"
                   value={penalty}
-                  label="策略"
-                  onChange={(event => { setPenalty(event.target.value) })}
+                  exclusive
+                  sx={{ width: "100%" }}
+                  color='primary'
+                  onChange={(event, newAlignment) => { setPenalty(newAlignment) }}
                 >
-                  <MenuItem value={0}>距离最短</MenuItem>
-                  <MenuItem value={2000}>时间最短</MenuItem>
-                  <MenuItem value={9999999}>最少换乘</MenuItem>
-                </Select>
-                <FormControlLabel control={<Switch value={isTravelTicket} onChange={(event=>{setIfTravelTicket(event.target.checked)})} />} label="使用旅游票" />
+                  <ToggleButton value={0} style={{ flexGrow: 2 }}>距离最短</ToggleButton>
+                  <ToggleButton value={2000} style={{ flexGrow: 2 }}>时间最短</ToggleButton>
+                  <ToggleButton value={9999999} style={{ flexGrow: 2 }}>最少换乘</ToggleButton>
+                </ToggleButtonGroup>
+              </FormControl>
+              <FormControl fullWidth className={styles.formControl}>
+                <FormLabel id="travel-label">车票种类</FormLabel>
+                <ToggleButtonGroup
+                  labelId="travel-label"
+                  id="travel-select"
+                  value={isTravelTicket}
+                  exclusive
+                  sx={{ width: "100%" }}
+                  color='primary'
+                  onChange={(event, newAlignment) => { setIfTravelTicket(newAlignment) }}
+                >
+                  <ToggleButton value='none' style={{ flexGrow: 2 }}>一卡通、单程票</ToggleButton>
+                  <ToggleButton value='timed' style={{ flexGrow: 2 }}>定期票</ToggleButton>
+                  <ToggleButton value='special' style={{ flexGrow: 2 }}>旅游票</ToggleButton>
+                </ToggleButtonGroup>
               </FormControl>
               <Button variant="contained" size='large' className={styles.goButton} endIcon={<SendIcon />} onClick={handleRouteClick} disabled={beginName == '' || endName == '' || beginName == endName}>开始寻路！</Button>
               <PathSolve
@@ -256,7 +288,7 @@ export default function Home() {
               </PathSolve>
             </Paper>
           </Grid>
-          <Grid xs={9} className={styles.rightPanel}>
+          <Grid xs={12} sm={6} md={8} lg={9} className={styles.rightPanel}>
             <Canvas metadata={pathResult} callMaskToDisappear={() => {
               setTimeout(() => {
                 setMaskStatus(false)

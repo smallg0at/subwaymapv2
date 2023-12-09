@@ -60,25 +60,37 @@ export default function PathSolve({ pathData, startInput, endInput, isTravelTick
   const handleTravelText = React.useMemo(() => {
     var price = 0;
     var distance = metadata.length / 1000.0
-    if (isTravelTicket) {
+    var triggeredPriceReduction = false
+    if(isTravelTicket == 'special' && distance > 13.139){
+      distance = 13.139
+      triggeredPriceReduction = true
+    }
+    if (distance < 0 && !isNaN(distance)) {
+      price = 0
+    } else if (distance <= 6) {
+      price = 3
+    } else if (distance <= 12) {
+      price = 4
+    } else if (distance <= 22) {
+      price = 5
+    } else if (distance <= 32) {
+      price = 6
+    } else {
+      price = 6 + (Math.ceil((distance - 32) / 20))
+    }
+    if (isTravelTicket == 'timed') {
       return (
-        <span style={{ fontSize: '12px' }}>已包含在旅游票</span>
+        <span style={{ fontSize: '12px' }}>已包含在定期票</span>
       );
     }
-    else {
-      if (distance < 0 && !isNaN(distance)) {
-        price = 0
-      } else if (distance <= 6) {
-        price = 3
-      } else if (distance <= 12) {
-        price = 4
-      } else if (distance <= 22) {
-        price = 5
-      } else if (distance <= 32) {
-        price = 6
-      } else {
-        price = 6 + (Math.ceil((distance - 32) / 20))
-      }
+    else if(isTravelTicket == 'special'){
+      return (
+        <>
+        <span>{"￥" + String(price)}&nbsp;</span>
+        <span style={{ fontSize: '12px' }}>旅游票折扣</span>
+        </>
+      );
+    } else {
       console.log(price, distance, metadata)
       return "￥" + String(price)
     }
@@ -114,7 +126,7 @@ export default function PathSolve({ pathData, startInput, endInput, isTravelTick
               <ListItemIcon>
                 <LocationOnIcon />
               </ListItemIcon>
-              <ListItemText primary={stationIdList[metadata.startStationInfo.name] + `(${metadata.startStationInfo.name})`} secondary={`乘坐 ${metadata.startStationInfo.line}${metadata.startStationInfo.line.includes('线') ? '' : ' 号线'}`}></ListItemText>
+              <ListItemText primary={stationIdList[metadata.startStationInfo.name]} secondary={`乘坐 ${metadata.startStationInfo.line}${metadata.startStationInfo.line.includes('线') ? '' : ' 号线'}`}></ListItemText>
             </ListItem>
             {metadata.path.map((item, index) => {
               if (index > 0) {
