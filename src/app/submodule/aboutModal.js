@@ -47,8 +47,15 @@ export default function AboutModal() {
                     <Typography gutterBottom variant="h5">如何购买北京地铁定期票</Typography>
                     <Typography gutterBottom variant="body1">请下载亿通行 App 购买北京轨道交通定期票。<br />
                         北京轨道交通定期票为电子票，一日票票价为20元/张，二日票票价为30元/张，三日票票价为40元/张，五日票票价为70元/张，七日票票价为90元/张。在使用有效期内限单人不限次使用，无超时、超程限制。</Typography>
+                    <Typography gutterBottom variant="h5">旅游票定价规范</Typography>
+                    <Typography gutterBottom variant="body1">对于里程在 13139m 以上的路程，按 13139m 路程计价。</Typography>
+                    <Typography gutterBottom variant="body1">实际上，按照实际情况，这种票本来就不应该存在。</Typography>
+                    <Typography gutterBottom variant="h5">定期票定价规范</Typography>
+                    <Typography gutterBottom variant="body1">你都给定期票付过钱了那当然价格为0啊！</Typography>
                     <Typography gutterBottom variant="h5">协议</Typography>
-                    <Typography gutterBottom variant="body1" style={{ marginBottom: '15px' }}>LICENSE: MIT License</Typography>
+                    <Link href="https://github.com/smallg0at/subwaymapv2/blob/master/LICENSE" underline="hover" target="_blank" rel="noopener" gutterBottom>
+                        <Typography gutterBottom variant="body1" style={{ marginBottom: '15px' }}>Modified MIT License</Typography>
+                    </Link>
                 </Box>
             </Modal>
         </React.Fragment>

@@ -86,6 +86,8 @@
     background-color: #000000c6;
     border-radius: 10px;
     padding: 6px;
+    transform: scale(0.8);
+    transform-origin: top left;
   }
 }
 
