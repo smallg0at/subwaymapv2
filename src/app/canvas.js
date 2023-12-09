@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { Button, ButtonGroup, Fab, Box } from "@mui/material";
+import Fab from "@mui/material/Fab";
+import Box from "@mui/material/Box";
+
 
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
 
 import styles from './canvas.module.css'
 
@@ -15,27 +16,29 @@ import CanvasImage from './submodule/canvasImage.js'
 
 import Image from 'next/image'
 
-export default function Canvas(props) {
+export default function Canvas({metadata, callMaskToDisappear}) {
+
+  const memorizedMetadata = React.useMemo(()=>{
+    return metadata
+  }, [metadata])
+
   function handleIfIsTranfer(index) {
-    return props.metadata.isTransfer[index] != -1
+    return metadata.isTransfer[index] != -1
   }
 
-  function updateLines(){
+  // updateLines()
+  useEffect(()=>{
     var ctx = document.querySelector('#the-canvas').getContext('2d')
     ctx.reset()
     ctx.strokeStyle = '#263238'
     ctx.lineWidth = 100
-    if(props.metadata.path.length == 0) return;
-    for(let i=1; i<props.metadata.path.length; i++){
-      ctx.moveTo(stationPos[props.metadata.path[i]].x, stationPos[props.metadata.path[i]].y)
-      ctx.lineTo(stationPos[props.metadata.path[i-1]].x, stationPos[props.metadata.path[i-1]].y)
+    if(metadata.path.length == 0) return;
+    for(let i=1; i<metadata.path.length; i++){
+      ctx.moveTo(stationPos[metadata.path[i]].x, stationPos[metadata.path[i]].y)
+      ctx.lineTo(stationPos[metadata.path[i-1]].x, stationPos[metadata.path[i-1]].y)
       ctx.stroke()
     }
-  }
-  // updateLines()
-  useEffect(()=>{
-    updateLines()
-  })
+  }, [metadata])
 
   return (
     <TransformWrapper
@@ -52,9 +55,9 @@ export default function Canvas(props) {
             <Fab onClick={() => zoomOut()} color="primary"><ZoomOutIcon /></Fab>
           </Box>
           <TransformComponent wrapperClass={styles.canvasWrapper}>
-            <CanvasImage callMaskToDisappear={()=>props.callMaskToDisappear()}/>
+            <CanvasImage callMaskToDisappear={()=>callMaskToDisappear()}/>
             <canvas className={styles.thecanvas} id="the-canvas" width={14173} height={11942}></canvas>
-            {props.metadata.path.map((item, index) => {
+            {memorizedMetadata.path.map((item, index) => {
               // console.log(`${item} => ${stationPos[item].id}`)
               return (
                 <StationNode

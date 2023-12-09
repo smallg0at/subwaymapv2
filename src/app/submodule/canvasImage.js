@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import submap from '../../../public/lwt-lossless.webp'
+import submap from '../../../public/lwt-lossless-0.5x.webp'
  
 export default function Background(props) {
   return (

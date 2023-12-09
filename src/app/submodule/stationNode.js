@@ -1,8 +1,6 @@
 import * as React from 'react'
 import styles from './stationNode.module.css';
 
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import ChangeCircleOutlinedIcon from '@mui/icons-material/ChangeCircleOutlined';
 import Paper from '@mui/material/Paper';
 

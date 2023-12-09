@@ -1,6 +1,12 @@
 import * as React from 'react';
 
-import { Card, Typography, CardContent, List, ListItem, ListItemText, ListItemIcon, Divider } from "@mui/material";
+import Card from "@mui/material/Card";
+import Typography from "@mui/material/Typography";
+import CardContent from "@mui/material/CardContent";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemIcon from "@mui/material/ListItemIcon";
 import Grid from '@mui/material/Unstable_Grid2';
 
 import stationIdList from './data/stationIdList.json'
@@ -13,83 +19,88 @@ var keyIter = 0;
 
 
 
-export default function PathSolve(props) {
+export default function PathSolve({ pathData, startInput, endInput, isTravelTicket }) {
+
+  const metadata = React.useMemo(() => {
+    return pathData
+  }, [pathData])
 
   function handleTransferText(index) {
-    if (props.metadata.isTransfer[index] != -1) {
-      let dt = props.metadata.transferList[props.metadata.isTransfer[index]]
+    if (metadata.isTransfer[index] != -1) {
+      let dt = metadata.transferList[metadata.isTransfer[index]]
       // console.log(dt)
       return `在此换乘：${dt.prev}${dt.prev.includes('线') ? '' : ' 号线'} ➡ ${dt.to}${dt.to.includes('线') ? '' : ' 号线'}`;
     }
   }
 
   function handleIfIsTranfer(item, index) {
-    if (props.metadata.isTransfer[index] != -1) return (<ChangeCircleIcon />)
-    else if (props.metadata.path.length == index + 1) return (<LocationOnIcon />)
+    if (metadata.isTransfer[index] != -1) return (<ChangeCircleIcon />)
+    else if (metadata.path.length == index + 1) return (<LocationOnIcon />)
     else return (<ArrowDownwardIcon color='text.secondary' style={{ opacity: 0.3 }} />)
   }
 
-  function handleTicketPrice(distance) {
-    if (props.isTravelTicket) {
-      return 0
-    }
-    if (distance < 0 && !isNaN(distance)) {
-      return 0
-    } else if (distance <= 6) {
-      return 3
-    } else if (distance <= 12) {
-      return 4
-    } else if (distance <= 22) {
-      return 5
-    } else if (distance <= 32) {
-      return 6
-    } else {
-      return 6 + (Math.ceil((distance - 32) / 20))
-    }
-  }
+
 
   function handleStartDiffText() {
-    if (props.startInput != stationIdList[props.metadata.path[0]]) {
-      return <Typography variant="body2" style={{ marginTop: '5px' }}>{props.startInput} 在 {stationIdList[props.metadata.path[0]]} 站附近</Typography>
+    if (startInput != stationIdList[metadata.path[0]]) {
+      return <Typography variant="body2" style={{ marginTop: '5px' }}>{startInput} 在 {stationIdList[metadata.path[0]]} 站附近</Typography>
     } else {
       return <React.Fragment />
     }
   }
 
   function handleEndDiffText() {
-    if (props.endInput != stationIdList[props.metadata.path[props.metadata.path.length - 1]]) {
-      return <Typography variant="body2" style={{ marginTop: '5px' }}>{props.endInput} 在 {stationIdList[props.metadata.path[props.metadata.path.length - 1]]} 站附近</Typography>
+    if (endInput != stationIdList[metadata.path[metadata.path.length - 1]]) {
+      return <Typography variant="body2" style={{ marginTop: '5px' }}>{endInput} 在 {stationIdList[metadata.path[metadata.path.length - 1]]} 站附近</Typography>
     } else {
       return <React.Fragment />
     }
   }
 
-  function handleTravelText(isTravelTicket) {
-    // console.log(`UPDATE TVT: ${isTravelTicket}`)
-    if (isTravelTicket) { return (
-        <span style={{fontSize: '12px'}}>已包含在旅游票</span>
-    ); }
-    else {
-      return "￥" + handleTicketPrice(props.metadata.length / 1000)
+  const handleTravelText = React.useMemo(() => {
+    var price = 0;
+    var distance = metadata.length / 1000.0
+    if (isTravelTicket) {
+      return (
+        <span style={{ fontSize: '12px' }}>已包含在旅游票</span>
+      );
     }
-  }
+    else {
+      if (distance < 0 && !isNaN(distance)) {
+        price = 0
+      } else if (distance <= 6) {
+        price = 3
+      } else if (distance <= 12) {
+        price = 4
+      } else if (distance <= 22) {
+        price = 5
+      } else if (distance <= 32) {
+        price = 6
+      } else {
+        price = 6 + (Math.ceil((distance - 32) / 20))
+      }
+      console.log(price, distance, metadata)
+      return "￥" + String(price)
+    }
+  }, [isTravelTicket, metadata])
+
 
   return (
-    <Grid container direction={'column'} sx={{ display: (props.metadata.isValid) ? 'flex' : 'none' }}>
+    <Grid container direction={'column'} sx={{ display: (metadata.isValid) ? 'flex' : 'none' }}>
       <Card variant='outlined' style={{ marginBottom: '15px' }}>
         <CardContent style={{ paddingBottom: '16px' }}>
           <Grid container>
             <Grid item xs={6}>
-              <Typography fontSize={'20px'} gutterBottom>{Math.ceil(props.metadata.time)} 分钟</Typography>
+              <Typography fontSize={'20px'} gutterBottom>{Math.ceil(metadata.time)} 分钟</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography fontSize={'20px'} gutterBottom>{(props.metadata.length / 1000).toFixed(1)}km</Typography>
+              <Typography fontSize={'20px'} gutterBottom>{(metadata.length / 1000).toFixed(1)}km</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography fontSize={'20px'}>换乘 {props.metadata.transfers} 次</Typography>
+              <Typography fontSize={'20px'}>换乘 {metadata.transfers} 次</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography fontSize={'20px'}>票价 {handleTravelText(props.isTravelTicket)}</Typography>
+              <Typography fontSize={'20px'}>票价 {handleTravelText}</Typography>
             </Grid>
           </Grid>
 
@@ -103,9 +114,9 @@ export default function PathSolve(props) {
               <ListItemIcon>
                 <LocationOnIcon />
               </ListItemIcon>
-              <ListItemText primary={stationIdList[props.metadata.startStationInfo.name] + `(${props.metadata.startStationInfo.name})`} secondary={`乘坐 ${props.metadata.startStationInfo.line}${props.metadata.startStationInfo.line.includes('线') ? '' : ' 号线'}`}></ListItemText>
+              <ListItemText primary={stationIdList[metadata.startStationInfo.name] + `(${metadata.startStationInfo.name})`} secondary={`乘坐 ${metadata.startStationInfo.line}${metadata.startStationInfo.line.includes('线') ? '' : ' 号线'}`}></ListItemText>
             </ListItem>
-            {props.metadata.path.map((item, index) => {
+            {metadata.path.map((item, index) => {
               if (index > 0) {
                 return (
                   <React.Fragment key={keyIter++}>

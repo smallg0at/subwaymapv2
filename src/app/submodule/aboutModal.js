@@ -1,4 +1,9 @@
-import { Typography, IconButton, Box, Button, Link, Divider } from "@mui/material"
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import Box from "@mui/system/Box";
+import Button from "@mui/material/Button";
+import Link from "@mui/material/Link";
+import Divider from "@mui/material/Divider";
 import * as React from 'react'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import Modal from '@mui/material/Modal';
@@ -16,13 +21,13 @@ const style = {
     p: 4,
 };
 
-export default function AboutModal(props) {
+export default function AboutModal() {
     const [isModalOpen, setModalOpen] = React.useState(false)
     const handleOpen = () => setModalOpen(true)
     const handleClose = () => setModalOpen(false)
     return (
         <React.Fragment>
-            <IconButton aria-label="about" size="small" onClick={handleOpen}>
+            <IconButton aria-label="about" size="small" onClick={handleOpen} variant="filled">
                 <InfoOutlinedIcon />
             </IconButton>
             <Modal
@@ -30,14 +35,17 @@ export default function AboutModal(props) {
                 onClose={handleClose}
             >
                 <Box sx={style}>
-                    <Typography variant="h4">北京地铁图</Typography>
-                    <Typography variant="h5">Copyright YC L, 2023</Typography>
-                    <Divider></Divider>
-                    <Typography variant="body1">初试 React，做了个蛮正常的东西</Typography>
-                    <Typography variant="body1" style={{marginBottom: '15px'}}>LICENSE: MIT License</Typography>
-                    <Link href="https://github.com/smallg0at/subwaymapv2" target="_blank" rel="noopener">
+                    <Typography gutterBottom variant="h4">北京地铁图</Typography>
+                    <Typography gutterBottom variant="h5">Copyright YC L, 2023</Typography>
+                    <Link href="https://github.com/smallg0at/subwaymapv2" target="_blank" rel="noopener" gutterBottom>
                         <Button startIcon={<GitHubIcon />}>GitHub</Button>
                     </Link>
+                    <Divider sx={{ marginBottom: '20px' }}></Divider>
+                    <Typography gutterBottom variant="h5">如何购买北京地铁定期票</Typography>
+                    <Typography gutterBottom variant="body1">请下载亿通行 App 购买北京轨道交通定期票。<br />
+                        北京轨道交通定期票为电子票，一日票票价为20元/张，二日票票价为30元/张，三日票票价为40元/张，五日票票价为70元/张，七日票票价为90元/张。在使用有效期内限单人不限次使用，无超时、超程限制。</Typography>
+                    <Typography gutterBottom variant="h5">协议</Typography>
+                    <Typography gutterBottom variant="body1" style={{ marginBottom: '15px' }}>LICENSE: MIT License</Typography>
                 </Box>
             </Modal>
         </React.Fragment>

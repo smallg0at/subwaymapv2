@@ -3,7 +3,15 @@
 import * as React from 'react';
 
 import styles from './page.module.css'
-import { Paper, Button, Select, MenuItem, InputLabel, FormControl, CircularProgress, FormControlLabel, Switch } from '@mui/material'
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
+import CircularProgress from "@mui/material/CircularProgress";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
 import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete'
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -201,7 +209,7 @@ export default function Home() {
           <Grid xs={3}>
             <Paper className={styles.toplevel} >
               <div className={styles.header}>
-                <div className={styles.logo}>
+                <div className={styles.logo} style={{backgroundColor: 'background.paper'}}>
                   <DirectionsSubwayIcon fontSize="large" color='primary' />
                 </div>
                 <AboutModal />
@@ -241,7 +249,7 @@ export default function Home() {
               </FormControl>
               <Button variant="contained" size='large' className={styles.goButton} endIcon={<SendIcon />} onClick={handleRouteClick} disabled={beginName == '' || endName == '' || beginName == endName}>开始寻路！</Button>
               <PathSolve
-                metadata={pathResult}
+                pathData={pathResult}
                 startInput={beginName}
                 endInput={endName}
                 isTravelTicket={isTravelTicket}>
@@ -252,7 +260,7 @@ export default function Home() {
             <Canvas metadata={pathResult} callMaskToDisappear={() => {
               setTimeout(() => {
                 setMaskStatus(false)
-              }, 1000);
+              }, 1);
             }}></Canvas>
           </Grid>
         </Grid>

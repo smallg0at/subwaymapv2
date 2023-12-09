@@ -13,19 +13,19 @@
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.8",
     "@mui/icons-material": "^5.14.13",
-    "@mui/material": "^5.14.13",
+    "@mui/material": "^5.14.20",
     "@vercel/analytics": "^1.1.1",
     "@vercel/speed-insights": "^1.0.0",
     "buckets-js": "^1.98.2",
     "csv-parse": "^5.5.2",
-    "next": "13.5.4",
-    "react": "^18",
-    "react-dom": "^18",
+    "next": "^14.0.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-zoom-pan-pinch": "^3.3.0",
     "sharp": "^0.32.6"
   },
   "devDependencies": {
     "eslint": "^8",
-    "eslint-config-next": "13.5.4"
+    "eslint-config-next": "^14.0.4"
   }
 }

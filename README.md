@@ -63,6 +63,10 @@ This project uses a modified MIT License with the following limitation:
 
 - The author name above must be credited in the report when a modified version of this software is used to compose one.
 
+## Telemetry
+
+For performance analytics reasons, this app will send anonymous data to vercel's server to help the author to do some optimization. 
+
 ## About
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
