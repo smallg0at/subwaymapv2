@@ -213,8 +213,9 @@ export default function Home() {
   return (
     <ThemeProvider theme={theme}>
       <Head>
-        <title></title>
+        <title>地铁导航系统</title>
         <meta name='description' content='用 React 写的地铁导航系统' />
+        <link rel="manifest" href="/manifest.json" />
         <SpeedInsights />
       </Head>
       <CssBaseline />

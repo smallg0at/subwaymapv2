@@ -1,0 +1,14 @@
+{
+    "short_name": "北京地铁图",
+    "name": "北京地铁图",
+    "icon": [
+        {
+            "src": "icon.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "display" : "standalone",
+    "description": "带有导航功能的北京地铁图",
+    "start_url": "/"
+}
