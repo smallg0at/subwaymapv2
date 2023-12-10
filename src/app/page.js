@@ -257,7 +257,7 @@ export default function Home() {
                   exclusive
                   sx={{ width: "100%" }}
                   color='primary'
-                  onChange={(event, newAlignment) => { setPenalty(newAlignment) }}
+                  onChange={(event, newAlignment) => { if(newAlignment !== null) setPenalty(newAlignment) }}
                 >
                   <ToggleButton value={0} style={{ flexGrow: 2 }}>距离最短</ToggleButton>
                   <ToggleButton value={2000} style={{ flexGrow: 2 }}>时间最短</ToggleButton>
@@ -273,7 +273,7 @@ export default function Home() {
                   exclusive
                   sx={{ width: "100%" }}
                   color='primary'
-                  onChange={(event, newAlignment) => { setIfTravelTicket(newAlignment) }}
+                  onChange={(event, newAlignment) => { if(newAlignment !== null)setIfTravelTicket(newAlignment) }}
                 >
                   <ToggleButton value='none' style={{ flexGrow: 2 }}>一卡通、单程票</ToggleButton>
                   <ToggleButton value='timed' style={{ flexGrow: 2 }}>定期票</ToggleButton>
