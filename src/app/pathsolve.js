@@ -91,7 +91,7 @@ export default function PathSolve({ pathData, startInput, endInput, isTravelTick
         </>
       );
     } else {
-      console.log(price, distance, metadata)
+      // console.log(price, distance, metadata)
       return "￥" + String(price)
     }
   }, [isTravelTicket, metadata])

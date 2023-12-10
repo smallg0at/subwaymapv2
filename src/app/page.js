@@ -73,7 +73,7 @@ function findShortestPath(startID, endID, transferPenalty = 0) {
   visited[startID] = 0;
 
   let shortest = { path: [], length: 1e100, setPenalties: transferPenalty, transferList: [], isValid: false, startStationInfo: { name: "", line: "" }, time: 0.0 };
-  console.log(neighbors[startID])
+  // console.log(neighbors[startID])
 
   while (!queue.isEmpty()) {
 
@@ -110,7 +110,7 @@ function findShortestPath(startID, endID, transferPenalty = 0) {
           }
         }
       }
-      console.log(current, currentTransfers)
+      // console.log(current, currentTransfers)
       if (currentLength < shortest.length) {
         shortest.path = currentPath;
         shortest.length = currentLength;
