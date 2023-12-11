@@ -21,7 +21,7 @@ const style = {
     borderRadius: '10px',
     p: 4,
     overflow: "auto",
-    zIndex: 10010
+    zIndex: 12222
 };
 
 export default function AboutModal() {
@@ -30,12 +30,13 @@ export default function AboutModal() {
     const handleClose = () => setModalOpen(false)
     return (
         <React.Fragment>
-            <IconButton aria-label="about" size="small" onClick={handleOpen} variant="filled">
+            <IconButton aria-label="about" onClick={handleOpen} variant="filled">
                 <InfoOutlinedIcon />
             </IconButton>
             <Modal
                 open={isModalOpen}
                 onClose={handleClose}
+                sx={{zIndex: 12221}}
             >
                 <Box sx={style}>
                     <Typography gutterBottom variant="h4">北京地铁图</Typography>

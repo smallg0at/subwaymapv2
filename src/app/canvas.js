@@ -50,9 +50,9 @@ export default function Canvas({metadata, callMaskToDisappear}) {
       {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
         <React.Fragment>
           <Box className={styles.tools} variant="contained">
-            <Fab onClick={() => zoomIn()} color="primary"><ZoomInIcon /></Fab>
+            <Fab onClick={() => zoomIn()} size="small" color="primary"><ZoomInIcon /></Fab>
             {/* <Fab onClick={() => resetTransform()} color="primary" size="small"><FullscreenIcon /></Fab> */}
-            <Fab onClick={() => zoomOut()} color="primary"><ZoomOutIcon /></Fab>
+            <Fab onClick={() => zoomOut()} size="small" color="primary"><ZoomOutIcon /></Fab>
           </Box>
           <TransformComponent wrapperClass={styles.canvasWrapper}>
             <CanvasImage callMaskToDisappear={()=>callMaskToDisappear()}/>
