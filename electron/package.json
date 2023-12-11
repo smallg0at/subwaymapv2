@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "An Amazing Capacitor App",
   "author": {
-    "name": "",
-    "email": ""
+    "name": "Jerry Liu",
+    "email": "smallg0at@outlook.com"
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/smallg0at/subwaymapv2.git"
   },
   "license": "MIT",
   "main": "build/src/index.js",
@@ -17,7 +17,7 @@
     "electron:start-live": "node ./live-runner.js",
     "electron:start": "npm run build && electron --inspect=5858 ./",
     "electron:pack": "npm run build && electron-builder build --dir -c ./electron-builder.config.json",
-    "electron:make": "npm run build && electron-builder build -c ./electron-builder.config.json -p always"
+    "electron:make": "npm run build && electron-builder build -c ./electron-builder.config.json -p always --publish=never"
   },
   "dependencies": {
     "@capacitor-community/electron": "^5.0.0",
