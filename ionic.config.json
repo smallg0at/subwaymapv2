@@ -1,0 +1,7 @@
+{
+  "name": "subwaymapv2",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "custom"
+}
