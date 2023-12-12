@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.ycl.beijingsubwaymap',
-  appName: 'BeijingSubwayMap',
+  appName: '北京地铁图',
   webDir: 'out',
   server: {
     androidScheme: 'https'
