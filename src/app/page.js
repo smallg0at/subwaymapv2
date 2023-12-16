@@ -5,13 +5,9 @@ import * as React from 'react';
 import styles from './page.module.css'
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from '@mui/material/FormLabel';
 import CircularProgress from "@mui/material/CircularProgress";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import TextField from '@mui/material/TextField'
@@ -41,13 +37,14 @@ import { green, amber } from '@mui/material/colors';
 
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
+import { SnackbarProvider, enqueueSnackbar } from 'notistack';
 
 
-function findShortestPath(startID, endID, transferPenalty = 0) {
+function findShortestPath(startID, endID, variant) {
   let neighbors = {};
-  console.log(`findShortestPath: ${startID}, ${endID}, ${transferPenalty}`)
+
+
+  console.log(`findShortestPath: ${startID}, ${endID}, ${variant}`)
   // Setup graph
   for (let record of distanceData) {
     let id1 = record.id1; //站ID1
@@ -65,39 +62,73 @@ function findShortestPath(startID, endID, transferPenalty = 0) {
   }
 
 
-  let queue = new PriorityQueue((a, b) => a.length < b.length);
+  var queue = new PriorityQueue((a, b) => {
+    if (variant === 'shortest') {
+      return a.length < b.length
+    } else if (variant === 'fastest') {
+      return a.time < b.time
+    } else if (variant === "least-transfers") {
+      return a.transfers < b.transfers
+    } else {
+      throw "InvalidVariantInput"
+    }
+  });
 
-  queue.enqueue({ id: startID, length: 0, path: [startID] });
+  var handleIsShortest = (a, b) => {
+    if (variant === 'shortest') {
+      return a.length < b.length
+    } else if (variant === 'fastest') {
+      return a.time < b.time
+    } else if (variant === "least-transfers") {
+      if((a.transfers == b.transfers)){
+        return a.time < b.time
+      } else {
+        return a.transfers < b.transfers
+      }
+    } else {
+      throw "InvalidVariantInput"
+    }
+  }
 
-  let visited = {};
-  visited[startID] = 0;
+  queue.enqueue({ id: startID, length: 0, path: [startID], time: 0, transfers: -1, frontOnLine: null });
 
-  let shortest = { path: [], length: 1e100, setPenalties: transferPenalty, transferList: [], isValid: false, startStationInfo: { name: "", line: "" }, time: 0.0 };
-  // console.log(neighbors[startID])
+  var visited = {};
+  visited[startID] = 1;
+
+  let shortest = {
+    path: [],
+    length: 1e100,
+    transferList: [],
+    isValid: false,
+    startStationInfo: { name: "", line: "" },
+    time: 1e100,
+    transfers: 1000
+  };
+
+  var queueInstances = 0
 
   while (!queue.isEmpty()) {
-
+    queueInstances++;
+    if (queueInstances > 100000) {
+      throw "AlgorithmError!"
+    }
     let current = queue.dequeue();
-    let currentID = current.id;
-    let currentLength = current.length;
-    let currentPath = current.path;
 
-
-    if (currentID == endID) {
+    if (current.id == endID) {
+      console.log(current)
       shortest.isValid = true
       let currentTransfers = 0;
       let currentTransferList = []
       let lastOnLine = -1;
-      for (let i = 0; i < currentPath.length - 1; i++) {
-        let fromID = currentPath[i];
-        let toID = currentPath[i + 1];
+      for (let i = 0; i < current.path.length - 1; i++) {
+        let fromID = current.path[i];
+        let toID = current.path[i + 1];
         let processedId = new Set()
         for (let neighbor of neighbors[fromID]) {
           if (neighbor.id == toID && !processedId.has(toID)) {
             if (lastOnLine == -1) {
               lastOnLine = neighbor.onLine
             } else if (lastOnLine != neighbor.onLine) {
-              currentLength += transferPenalty;
               currentTransfers = currentTransfers + 1;
               currentTransferList.push({
                 id: fromID,
@@ -110,38 +141,62 @@ function findShortestPath(startID, endID, transferPenalty = 0) {
           }
         }
       }
-      // console.log(current, currentTransfers)
-      if (currentLength < shortest.length) {
-        shortest.path = currentPath;
-        shortest.length = currentLength;
+      console.log(current, shortest)
+      if (handleIsShortest(current, shortest)) {
+
+        shortest.path = current.path;
+        shortest.length = current.length;
         shortest.transfers = currentTransfers;
+        shortest.time = current.time;
         shortest.transferList = currentTransferList
         shortest.startStationInfo = {
           name: startID, line: neighbors[startID].find((item, index) => {
-            return item.id == currentPath[1]
+            return item.id == current.path[1]
           }).onLine
         }
       }
-      // break;
+      continue;
     }
 
-    for (let neighbor of neighbors[currentID]) {
+    for (let neighbor of neighbors[current.id]) {
       let nextID = neighbor.id;
-      let nextLength = currentLength + parseInt(neighbor.length);
+      let nextLength = current.length + parseInt(neighbor.length);
+      let nextTime = current.time + parseInt(neighbor.length) / (16.67 * 50) + 1 + ((neighbor.onLine === current.frontOnLine) ? 0 : 4)
+      let nextPath = [...current.path, parseInt(nextID)];
+      let nextTransfer = current.transfers + ((neighbor.onLine === current.frontOnLine) ? 0 : 1);
 
-      if (visited[nextID] && visited[nextID] <= nextLength) {
+      if (current.path.includes(parseInt(nextID))) {
+        continue
+      }
+
+      if (variant == 'shortest' && visited[nextID] && visited[nextID] < nextLength) {
+        continue;
+      } else if (variant == 'fastest' && visited[nextID] && visited[nextID] < nextTime) {
+        continue;
+      } else if (variant == 'least-transfers' && visited[nextID] && visited[nextID] - 1 < nextTransfer) {
         continue;
       }
 
-      let nextPath = [...currentPath, nextID];
-      queue.enqueue({ id: nextID, length: nextLength, path: nextPath });
+      if (nextLength > 200000) {
+        break
+      }
 
-      visited[nextID] = nextLength;
+      if (variant == 'shortest') {
+        visited[nextID] = nextLength;
+      } else if (variant == 'fastest') {
+        visited[nextID] = nextTime;
+      } else {
+        visited[nextID] = nextTransfer + 1;
+      }
+
+      queue.enqueue({ id: nextID, length: nextLength, path: nextPath, time: nextTime, transfers: nextTransfer, frontOnLine: neighbor.onLine });
+
+
     }
   }
 
-  shortest.length = shortest.length - shortest.transfers * shortest.setPenalties
-  shortest.time = (shortest.length / (16.67 * 60)) + shortest.transfers * 4.0
+  // shortest.length = shortest.length - shortest.transfers * shortest.setPenalties
+  // shortest.time = (shortest.length / (16.67 * 60)) + shortest.transfers * 4.0
 
   shortest.isTransfer = []
   shortest.path.forEach((item, index) => {
@@ -154,8 +209,8 @@ function findShortestPath(startID, endID, transferPenalty = 0) {
   return shortest;
 }
 
-function handleModuleSize(){
-  if(window.innerWidth > 600){
+function handleModuleSize() {
+  if (window.innerWidth > 600) {
     return "medium"
   } else {
     return "small"
@@ -166,7 +221,7 @@ function handleModuleSize(){
 export default function Home() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
-  const [penalty, setPenalty] = React.useState(0)
+  const [penalty, setPenalty] = React.useState('shortest')
   const [pathResult, setPathResult] = React.useState({ isValid: false, path: [], length: Infinity, setPenalties: 0, transferList: [], startStationInfo: { name: "", line: "" } })
 
   const [beginName, setBeginName] = React.useState('')
@@ -193,7 +248,10 @@ export default function Home() {
       alert("没有找到对应的站点信息")
       throw "BeginOrEndIdNotFound"
     }
-    setPathResult(findShortestPath(foundBeginId, foundEndId, parseInt(penalty)))
+    setPathResult(findShortestPath(foundBeginId, foundEndId, penalty))
+
+    enqueueSnackbar("操作成功！", { variant: "success" })
+
   }
   const theme = React.useMemo(
     () =>
@@ -207,101 +265,103 @@ export default function Home() {
     [prefersDarkMode],
   );
 
-  
+
 
 
   return (
     <ThemeProvider theme={theme}>
-      <Head>
-        <title>地铁导航系统</title>
-        <meta name='description' content='用 React 写的地铁导航系统' />
-        <link rel="manifest" href="/manifest.json" />
-        <SpeedInsights />
-      </Head>
-      <CssBaseline />
-      <main className={styles.main}>
-        <Grid container direction={{xs: 'column-reverse', sm: 'row'}}>
-          <Grid xs={12} sm={6} md={4} lg={3}>
-            <Paper className={styles.toplevel} >
-              <div className={styles.header}>
-                <div className={styles.logo} style={{ backgroundColor: 'background.paper' }}>
-                  <DirectionsSubwayIcon fontSize="large" color='primary' />
+      <SnackbarProvider autoHideDuration={2000}>
+        <Head>
+          <title>地铁导航系统</title>
+          <meta name='description' content='用 React 写的地铁导航系统' />
+          <link rel="manifest" href="/manifest.json" />
+          <SpeedInsights />
+        </Head>
+        <CssBaseline />
+        <main className={styles.main}>
+          <Grid container direction={{ xs: 'column-reverse', sm: 'row' }}>
+            <Grid xs={12} sm={6} md={4} lg={3}>
+              <Paper className={styles.toplevel} >
+                <div className={styles.header}>
+                  <div className={styles.logo} style={{ backgroundColor: 'background.paper' }}>
+                    <DirectionsSubwayIcon fontSize="large" color='primary' />
+                  </div>
+                  <AboutModal />
                 </div>
-                <AboutModal />
-              </div>
-              <FormControl fullWidth className={styles.formControl}>
-              <FormLabel id="places-label">起终点</FormLabel>
-                <Autocomplete
-                  disablePortal
-                  id="combo-box-begin"
-                  options={nameList}
-                  renderInput={(params) => <TextField {...params} label="起点" />}
-                  value={beginName}
-                  onChange={(event, value) => { setBeginName(value) }}
-                />
-                <Autocomplete
-                  disablePortal
-                  id="combo-box-end"
-                  options={nameList}
-                  renderInput={(params) => <TextField {...params} label="终点" />}
-                  value={endName}
-                  onChange={(event, value) => { setEndName(value) }}
-                />
-              </FormControl>
-              <FormControl fullWidth className={styles.formControl}>
-                <FormLabel id="algorithm-label">策略</FormLabel>
-                <ToggleButtonGroup
-                  labelId="algorithm-label"
-                  id="algorithm-select"
-                  value={penalty}
-                  exclusive
-                  sx={{ width: "100%" }}
-                  color='primary'
-                  onChange={(event, newAlignment) => { if(newAlignment !== null) setPenalty(newAlignment) }}
-                >
-                  <ToggleButton value={0} style={{ flexGrow: 2 }}>距离最短</ToggleButton>
-                  <ToggleButton value={2000} style={{ flexGrow: 2 }}>时间最短</ToggleButton>
-                  <ToggleButton value={9999999} style={{ flexGrow: 2 }}>最少换乘</ToggleButton>
-                </ToggleButtonGroup>
-              </FormControl>
-              <FormControl fullWidth className={styles.formControl}>
-                <FormLabel id="travel-label">车票种类</FormLabel>
-                <ToggleButtonGroup
-                  labelId="travel-label"
-                  id="travel-select"
-                  value={isTravelTicket}
-                  exclusive
-                  sx={{ width: "100%" }}
-                  color='primary'
-                  onChange={(event, newAlignment) => { if(newAlignment !== null)setIfTravelTicket(newAlignment) }}
-                >
-                  <ToggleButton value='none' style={{ flexGrow: 2 }}>一卡通、单程票</ToggleButton>
-                  <ToggleButton value='timed' style={{ flexGrow: 2 }}>定期票</ToggleButton>
-                  <ToggleButton value='special' style={{ flexGrow: 2 }}>旅游票</ToggleButton>
-                </ToggleButtonGroup>
-              </FormControl>
-              <Button variant="contained" size='large' className={styles.goButton} endIcon={<SendIcon />} onClick={handleRouteClick} disabled={beginName == '' || endName == '' || beginName == endName}>开始寻路！</Button>
-              <PathSolve
-                pathData={pathResult}
-                startInput={beginName}
-                endInput={endName}
-                isTravelTicket={isTravelTicket}>
-              </PathSolve>
-            </Paper>
+                <FormControl fullWidth className={styles.formControl}>
+                  <FormLabel id="places-label">起终点</FormLabel>
+                  <Autocomplete
+                    disablePortal
+                    id="combo-box-begin"
+                    options={nameList}
+                    renderInput={(params) => <TextField {...params} label="起点" />}
+                    value={beginName}
+                    onChange={(event, value) => { setBeginName(value) }}
+                  />
+                  <Autocomplete
+                    disablePortal
+                    id="combo-box-end"
+                    options={nameList}
+                    renderInput={(params) => <TextField {...params} label="终点" />}
+                    value={endName}
+                    onChange={(event, value) => { setEndName(value) }}
+                  />
+                </FormControl>
+                <FormControl fullWidth className={styles.formControl}>
+                  <FormLabel id="algorithm-label">策略</FormLabel>
+                  <ToggleButtonGroup
+                    labelId="algorithm-label"
+                    id="algorithm-select"
+                    value={penalty}
+                    exclusive
+                    sx={{ width: "100%" }}
+                    color='primary'
+                    onChange={(event, newAlignment) => { if (newAlignment !== null) setPenalty(newAlignment) }}
+                  >
+                    <ToggleButton value='shortest' style={{ flexGrow: 2 }}>距离最短</ToggleButton>
+                    <ToggleButton value='fastest' style={{ flexGrow: 2 }}>时间最短</ToggleButton>
+                    <ToggleButton value='least-transfers' style={{ flexGrow: 2 }}>最少换乘</ToggleButton>
+                  </ToggleButtonGroup>
+                </FormControl>
+                <FormControl fullWidth className={styles.formControl}>
+                  <FormLabel id="travel-label">车票种类</FormLabel>
+                  <ToggleButtonGroup
+                    labelId="travel-label"
+                    id="travel-select"
+                    value={isTravelTicket}
+                    exclusive
+                    sx={{ width: "100%" }}
+                    color='primary'
+                    onChange={(event, newAlignment) => { if (newAlignment !== null) setIfTravelTicket(newAlignment) }}
+                  >
+                    <ToggleButton value='none' style={{ flexGrow: 2 }}>一卡通、单程票</ToggleButton>
+                    <ToggleButton value='timed' style={{ flexGrow: 2 }}>定期票</ToggleButton>
+                    <ToggleButton value='special' style={{ flexGrow: 2 }}>旅游票</ToggleButton>
+                  </ToggleButtonGroup>
+                </FormControl>
+                <Button variant="contained" size='large' className={styles.goButton} endIcon={<SendIcon />} onClick={handleRouteClick} disabled={beginName == '' || endName == '' || beginName == endName}>开始寻路！</Button>
+                <PathSolve
+                  pathData={pathResult}
+                  startInput={beginName}
+                  endInput={endName}
+                  isTravelTicket={isTravelTicket}>
+                </PathSolve>
+              </Paper>
+            </Grid>
+            <Grid xs={12} sm={6} md={8} lg={9} className={styles.rightPanel}>
+              <Canvas metadata={pathResult} callMaskToDisappear={() => {
+                setTimeout(() => {
+                  setMaskStatus(false)
+                }, 1);
+              }}></Canvas>
+            </Grid>
           </Grid>
-          <Grid xs={12} sm={6} md={8} lg={9} className={styles.rightPanel}>
-            <Canvas metadata={pathResult} callMaskToDisappear={() => {
-              setTimeout(() => {
-                setMaskStatus(false)
-              }, 1);
-            }}></Canvas>
-          </Grid>
-        </Grid>
-        <div className={styles.mask} style={{ display: (maskStatus ? 'flex' : 'none') }}>
-          <CircularProgress disableShrink />
-        </div>
-      </main>
-      <Analytics />
+          <div className={styles.mask} style={{ display: (maskStatus ? 'flex' : 'none') }}>
+            <CircularProgress disableShrink />
+          </div>
+        </main>
+        <Analytics />
+      </SnackbarProvider>
     </ThemeProvider>
   )
 }
