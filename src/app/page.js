@@ -222,7 +222,7 @@ function handleModuleSize() {
 export default function Home() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
-  const [penalty, setPenalty] = React.useState('shortest')
+  const [penalty, setPenalty] = React.useState('fastest')
   const [pathResult, setPathResult] = React.useState({ isValid: false, path: [], length: Infinity, setPenalties: 0, transferList: [], startStationInfo: { name: "", line: "" } })
 
   const [beginName, setBeginName] = React.useState('')
