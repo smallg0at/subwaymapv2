@@ -6,7 +6,7 @@ import Paper from '@mui/material/Paper';
 
 export default function StationNode(props) {
     function handleIfIsTranfer() {
-        if (props.isTransfer) return (<ChangeCircleOutlinedIcon style={{ width: '170px', height: '170px' }} />)
+        if (props.isTransfer) return (<ChangeCircleOutlinedIcon style={{ width: '170px', height: '170px', color: 'white' }} />)
         // else return <LocationOnIcon style={{ width: '150px', height: '150px' }} />
     }
 

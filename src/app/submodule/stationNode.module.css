@@ -25,8 +25,13 @@
     width: 200px;
     height: 200px;
     transform: translate(-100px, -100px);
-    content: '始';
     opacity: 1;
+}
+.stationNode:nth-child(3)::before{
+    content: '始';
+    color: white;
+    font-size: 100px;
+    text-shadow: 0px 10px 30px rgba(0, 0, 0, 0.435);
 }
 .stationNode:last-child {
     background-color: rgb(33, 150, 243) !important;
@@ -37,7 +42,12 @@
     content: '始';
     opacity: 1;
 }
-
+.stationNode:last-child::before{
+    content: '终';
+    color: white;
+    font-size: 100px;
+    text-shadow: 0px 10px 30px rgba(0, 0, 0, 0.435);
+}
 .stationNode[data-isTransfer=true] {
     background-color: rgb(0, 150, 136) !important;
     border-color: rgb(0, 77, 64);

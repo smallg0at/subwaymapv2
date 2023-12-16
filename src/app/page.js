@@ -251,7 +251,7 @@ export default function Home() {
     }
     setPathResult(findShortestPath(foundBeginId, foundEndId, penalty))
 
-    enqueueSnackbar("操作成功！", { variant: "success" })
+    enqueueSnackbar("寻路完毕", { variant: "success" })
 
   }
   const theme = React.useMemo(
