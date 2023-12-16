@@ -20,6 +20,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Head from 'next/head'
 import { Analytics } from '@vercel/analytics/react';
 
+
 import DirectionsSubwayIcon from '@mui/icons-material/DirectionsSubway';
 
 import Canvas from './canvas';
@@ -264,8 +265,6 @@ export default function Home() {
       }),
     [prefersDarkMode],
   );
-
-
 
 
   return (

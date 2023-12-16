@@ -1,16 +1,11 @@
 import { parse } from 'csv-parse/sync';
 import { readFileSync, writeFileSync } from "fs";
-// import stationIdList from '../src/app/data/stationIdList.json'
 
-// const distanceDataText = readFileSync('../assets/human_powered_formfilling_v2.csv', { encoding: "utf-8" })
-
-// const distanceData = parse(distanceDataText, {
-//   columns: true
-// });
-
-// writeFileSync('../assets/pathData.json', JSON.stringify(distanceData), {encoding: 'utf-8'})
+// 到景点总表的 CSV
 const distanceDataText = readFileSync('./TouristAttraction.csv', { encoding: "utf-8" })
+// 到 ID => 站名 列表的 JSON
 const stationIdList = JSON.parse(readFileSync('../src/app/data/stationIdList.json', { encoding: "utf-8" }))
+// 到 所有可能输入（仅包含车站） 的 JSON
 const nameList = JSON.parse(readFileSync('../src/app/nameList.json', { encoding: "utf-8" }))
 
 const dataOld = parse(distanceDataText, {
@@ -46,6 +41,8 @@ dataOld.forEach((item) => {
 })
 
 
-
+// 景点 => 站 ID
 writeFileSync('../src/app/data/attractionData.json', JSON.stringify(dataNew), { encoding: 'utf-8' })
+
+// 新的所有可输入内容
 writeFileSync('../src/app/data/nameListData.json', JSON.stringify(nameList.sort((a, b) => a.localeCompare(b))), { encoding: 'utf-8' })
