@@ -61,7 +61,7 @@ export default function PathSolve({ pathData, startInput, endInput, isTravelTick
     var price = 0;
     var distance = metadata.length / 1000.0
     var triggeredPriceReduction = false
-    if(isTravelTicket == 'special' && distance > 13.139){
+    if (isTravelTicket == 'special' && distance > 13.139) {
       distance = 13.139
       triggeredPriceReduction = true
     }
@@ -83,11 +83,11 @@ export default function PathSolve({ pathData, startInput, endInput, isTravelTick
         <span style={{ fontSize: '12px' }}>已包含在定期票</span>
       );
     }
-    else if(isTravelTicket == 'special'){
+    else if (isTravelTicket == 'special') {
       return (
         <>
-        <span>{"￥" + String(price)}&nbsp;</span>
-        <span style={{ fontSize: '12px' }}>旅游票折扣</span>
+          <span>{"￥" + String(price)}&nbsp;</span>
+          {triggeredPriceReduction ? (<span style={{ fontSize: '12px' }}>旅游票折扣</span>) : ""}
         </>
       );
     } else {
@@ -106,7 +106,7 @@ export default function PathSolve({ pathData, startInput, endInput, isTravelTick
               <Typography fontSize={'20px'} gutterBottom>{Math.ceil(metadata.time)} 分钟</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography fontSize={'20px'} gutterBottom>{(metadata.length / 1000).toFixed(1)}km</Typography>
+              <Typography fontSize={'20px'} gutterBottom>{metadata.length > 1000 ? (metadata.length / 1000).toFixed(1) + "km" : metadata.length + "m"}</Typography>
             </Grid>
             <Grid item xs={6}>
               <Typography fontSize={'20px'}>换乘 {metadata.transfers} 次</Typography>
