@@ -72,7 +72,7 @@ npx cap open android
 
 ### Setup
 
-This will take a whild
+This will take a while
 
 ```
 cd ./electron/
@@ -102,6 +102,10 @@ Note:
 - Interconnected stations should use the same ID.
 - Station name doesn't matter as none of the pathfinding use it, you can tweak it anyway
 - files in `./databench` is for data preprocessing, and is not used by the application.
+
+## Toolkits for conversion
+
+Scattered in `databench/`. Read `databench/conversion.cjs` for more details.
 
 ## License
 

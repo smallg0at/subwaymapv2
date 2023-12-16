@@ -91,7 +91,7 @@ function findShortestPath(startID, endID, variant) {
     }
   }
 
-  queue.enqueue({ id: startID, length: 0, path: [startID], time: 0, transfers: -1, frontOnLine: null });
+  queue.enqueue({ id: startID, length: 0, path: [startID], time: -4, transfers: -1, frontOnLine: null });
 
   var visited = {};
   visited[startID] = 1;
@@ -142,7 +142,7 @@ function findShortestPath(startID, endID, variant) {
           }
         }
       }
-      console.log(current, shortest)
+      // console.log(current, shortest)
       if (handleIsShortest(current, shortest)) {
 
         shortest.path = current.path;
@@ -162,7 +162,7 @@ function findShortestPath(startID, endID, variant) {
     for (let neighbor of neighbors[current.id]) {
       let nextID = neighbor.id;
       let nextLength = current.length + parseInt(neighbor.length);
-      let nextTime = current.time + parseInt(neighbor.length) / (16.67 * 50) + 1 + ((neighbor.onLine === current.frontOnLine) ? 0 : 4)
+      let nextTime = current.time + parseInt(neighbor.length) / (16.67 * 60) + 1 + ((neighbor.onLine === current.frontOnLine) ? 0 : 4)
       let nextPath = [...current.path, parseInt(nextID)];
       let nextTransfer = current.transfers + ((neighbor.onLine === current.frontOnLine) ? 0 : 1);
 
