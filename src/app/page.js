@@ -69,7 +69,11 @@ function findShortestPath(startID, endID, variant) {
     } else if (variant === 'fastest') {
       return a.time < b.time
     } else if (variant === "least-transfers") {
-      return a.transfers < b.transfers
+      if ((a.transfers == b.transfers)) {
+        return a.time < b.time
+      } else {
+        return a.transfers < b.transfers
+      }
     } else {
       throw "InvalidVariantInput"
     }
@@ -81,7 +85,7 @@ function findShortestPath(startID, endID, variant) {
     } else if (variant === 'fastest') {
       return a.time < b.time
     } else if (variant === "least-transfers") {
-      if((a.transfers == b.transfers)){
+      if ((a.transfers == b.transfers)) {
         return a.time < b.time
       } else {
         return a.transfers < b.transfers
@@ -113,7 +117,7 @@ function findShortestPath(startID, endID, variant) {
     if (queueInstances > 100000) {
       throw "AlgorithmError!"
     }
-    let current = queue.dequeue();
+    var current = queue.dequeue();
 
     if (current.id == endID) {
       console.log(current)
@@ -142,7 +146,6 @@ function findShortestPath(startID, endID, variant) {
           }
         }
       }
-      // console.log(current, shortest)
       if (handleIsShortest(current, shortest)) {
 
         shortest.path = current.path;
@@ -206,6 +209,7 @@ function findShortestPath(startID, endID, variant) {
     })
     shortest.isTransfer.push(isTransferStation)
   })
+  console.log(queueInstances)
   console.log(shortest)
   return shortest;
 }
