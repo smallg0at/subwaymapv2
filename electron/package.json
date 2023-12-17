@@ -1,7 +1,7 @@
 {
   "name": "beijingsubwaymap-electron",
-  "version": "1.1.0",
-  "description": "An Amazing Capacitor App",
+  "version": "1.1.1",
+  "description": "Beijing Subway Map",
   "author": {
     "name": "Jerry Liu",
     "email": "smallg0at@outlook.com"

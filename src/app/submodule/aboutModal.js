@@ -41,7 +41,7 @@ export default function AboutModal() {
                 <Box sx={style}>
                     <Typography gutterBottom variant="h4">北京地铁图</Typography>
                     <Typography gutterBottom variant="h5">Copyright YC L, 2023</Typography>
-                    <Typography gutterBottom variant="body1">1.1.0</Typography>
+                    <Typography gutterBottom variant="body1">1.1.1</Typography>
                     <Link href="https://github.com/smallg0at/subwaymapv2" target="_blank" rel="noopener" gutterBottom>
                         <Button startIcon={<GitHubIcon />}>GitHub</Button>
                     </Link>
