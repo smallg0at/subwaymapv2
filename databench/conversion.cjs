@@ -78,6 +78,8 @@ function filterKeys(obj, keysToKeep, parentInfo='top', level=0) {
 
 var newObject = filterKeys(oldJsonObject, keepKeys)
 
+// Uncomment lines below to write to those files.
+
 // Just the original file converted to json.
 // fileOut = fs.writeFileSync('../assets/baidu_metrodata.json', JSON.stringify(newObject)) 
 

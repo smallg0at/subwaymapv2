@@ -1,3 +1,5 @@
+// Converts manually-input 
+
 import { parse } from 'csv-parse/sync';
 import { readFileSync, writeFileSync } from "fs";
 

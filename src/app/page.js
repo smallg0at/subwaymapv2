@@ -1,5 +1,7 @@
 'use client'
 
+// import 之海
+
 import * as React from 'react';
 
 import styles from './page.module.css'
@@ -40,7 +42,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 
 import { SnackbarProvider, enqueueSnackbar } from 'notistack';
 
-
+// 主寻路函数
 function findShortestPath(startID, endID, variant) {
   let neighbors = {};
 
@@ -214,6 +216,7 @@ function findShortestPath(startID, endID, variant) {
   return shortest;
 }
 
+// 未使用。
 function handleModuleSize() {
   if (window.innerWidth > 600) {
     return "medium"
@@ -222,7 +225,7 @@ function handleModuleSize() {
   }
 }
 
-
+// 主 UI
 export default function Home() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
@@ -236,6 +239,7 @@ export default function Home() {
 
   const [isTravelTicket, setIfTravelTicket] = React.useState('none')
 
+  // 负责 点击寻路 事件
   function handleRouteClick() {
     let foundBeginId = stationIdList.findIndex((item) => { return item == beginName })
     let foundEndId = stationIdList.findIndex((item) => { return item == endName })
@@ -270,7 +274,7 @@ export default function Home() {
     [prefersDarkMode],
   );
 
-
+  // 一坨 UI Shit Mountain
   return (
     <ThemeProvider theme={theme}>
       <SnackbarProvider autoHideDuration={2000}>
